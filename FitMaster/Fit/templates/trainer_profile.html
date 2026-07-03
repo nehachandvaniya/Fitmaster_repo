@@ -1,0 +1,83 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/trainer_profile.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>Trainer Profile</h1>
+    <p>Manage your account details, specialization, and trainer credentials.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label class="mb-2">First Name</label>
+        <input type="text" name="firstname" value="{{ trainer_data.users.firstname }}" class="input-glass" required>
+      </div>
+      <div class="col-md-6">
+        <label class="mb-2">Last Name</label>
+        <input type="text" name="lastname" value="{{ trainer_data.users.lastname }}" class="input-glass" required>
+      </div>
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label class="mb-2">Email</label>
+        <input type="email" name="email" value="{{ trainer_data.users.email }}" class="input-glass" required>
+      </div>
+      <div class="col-md-6">
+        <label class="mb-2">Mobile</label>
+        <input type="text" name="mobile" value="{{ trainer_data.users.mobile }}" class="input-glass" required>
+      </div>
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label class="mb-2">City</label>
+        <input type="text" name="city" value="{{ trainer_data.users.city }}" class="input-glass" required>
+      </div>
+      <div class="col-md-4">
+        <label class="mb-2">State</label>
+        <input type="text" name="state" value="{{ trainer_data.users.state }}" class="input-glass" required>
+      </div>
+      <div class="col-md-4">
+        <label class="mb-2">Pincode</label>
+        <input type="number" name="pincode" value="{{ trainer_data.users.pincode }}" class="input-glass" required>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="mb-2">Address</label>
+      <textarea name="address" class="textarea-glass" required>{{ trainer_data.users.address }}</textarea>
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label class="mb-2">Category</label>
+        <select name="category" class="select-glass" required>
+          <option value="gym" {% if trainer_data.category == 'gym' %}selected{% endif %}>Gym</option>
+          <option value="yoga" {% if trainer_data.category == 'yoga' %}selected{% endif %}>Yoga</option>
+          <option value="zumba" {% if trainer_data.category == 'zumba' %}selected{% endif %}>Zumba</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="mb-2">Experience Years</label>
+        <input type="number" name="experience_year" value="{{ trainer_data.experience_year }}" class="input-glass" required>
+      </div>
+      <div class="col-md-4">
+        <label class="mb-2">Qualification</label>
+        <input type="text" name="qualification" value="{{ trainer_data.qualification }}" class="input-glass" required>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label class="mb-2">Specialization</label>
+      <textarea name="specialization" class="textarea-glass" required>{{ trainer_data.specialization }}</textarea>
+    </div>
+    <button type="submit" class="btn-gold"><i class="fas fa-floppy-disk"></i>Save Profile</button>
+  </form>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,94 @@
+﻿{% extends "adminnav.html" %}
+{% load static %}
+{% block title %}View Package{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/view_package.css' %}">
+{% endblock %}
+{% block navitems %}
+
+
+<div class="package-view-wrap">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2 style="color: white; font-weight: 700; margin: 0;">Package Details</h2>
+            <p style="margin: 0.35rem 0 0; color: rgba(255, 255, 255, 0.65);">View package summary and assigned members.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'update_package' pack.id %}" class="btn-admin-primary">
+                <i class="fas fa-edit me-2"></i>Edit Package
+            </a>
+            <a href="{% url 'adminpackage' %}" class="btn-admin-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back
+            </a>
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Package Name</div>
+                <div class="summary-value">{{ pack.name }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Duration</div>
+                <div class="summary-value">{{ pack.duration_months }} months</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Price</div>
+                <div class="summary-value">Rs. {{ pack.price }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Active Members</div>
+                <div class="summary-value">{{ member_count }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <h3 style="font-weight: 700; margin-bottom: 1rem;">Description</h3>
+        <p style="margin: 0; line-height: 1.7; color: rgba(255, 255, 255, 0.82);">{{ pack.description }}</p>
+    </div>
+
+    <div class="glass-panel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 style="font-weight: 700; margin: 0;">Members Using This Package</h3>
+            <span style="color: rgba(255,255,255,0.65);">{{ member_count }} total</span>
+        </div>
+        <div class="table-responsive">
+            <table class="member-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Trainer</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for membership in memberships %}
+                    <tr>
+                        <td>{{ membership.customer.firstname }} {{ membership.customer.lastname }}</td>
+                        <td>
+                            {% if membership.trainer %}
+                                {{ membership.trainer.users.firstname }} {{ membership.trainer.users.lastname }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+                        </td>
+                        <td>{{ membership.status }}</td>
+                        <td>{{ membership.start_date|date:"d M Y" }}</td>
+                        <td>{{ membership.end_date|date:"d M Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="color: rgba(255,255,255,0.7); text-align: center;">No members are using this package yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

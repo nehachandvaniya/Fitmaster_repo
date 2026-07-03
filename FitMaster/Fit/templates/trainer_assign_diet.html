@@ -1,0 +1,84 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}Diet Plans{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/trainer_assign_diet.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>Diet Plan Management</h1>
+    <p>Create, update, and remove diet plans for members assigned to you.</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="panel">
+      <h2 style="font-size:1.35rem;font-weight:700;margin-bottom:1rem;">Create Diet Plan</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="mb-2">Customer</label>
+          <select name="customer_id" class="form-select-glass" required>
+            <option value="">Select customer</option>
+            {% for membership in memberships %}
+            <option value="{{ membership.customer.id }}">{{ membership.customer.firstname }} {{ membership.customer.lastname }} - {{ membership.package.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="mb-2">Diet Description</label>
+          <textarea name="diet_description" class="form-textarea-glass" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="mb-2">Calories</label>
+          <input type="number" name="calories" class="form-control-glass" required>
+        </div>
+        <button type="submit" class="btn-gold w-100"><i class="fas fa-plus"></i>Save Diet Plan</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 style="font-size:1.35rem;font-weight:700;margin:0;">Existing Diet Plans</h2>
+        <span style="color:rgba(255,255,255,.62);">{{ diet_plans.count }} plan{{ diet_plans.count|pluralize }}</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table-lite">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Description</th>
+              <th>Calories</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for plan in diet_plans %}
+            <tr>
+              <td>{{ plan.customer.firstname }} {{ plan.customer.lastname }}</td>
+              <td>{{ plan.diet_description }}</td>
+              <td>{{ plan.calories }}</td>
+              <td>{{ plan.created_at|date:"d M Y" }}</td>
+              <td>
+                <div class="d-flex gap-2 flex-wrap">
+                  <a href="{% url 'edit_diet_plan' plan.id %}" class="btn-soft"><i class="fas fa-pen"></i>Edit</a>
+                  <a href="{% url 'delete_diet_plan' plan.id %}" class="btn-soft btn-soft-danger" onclick="return confirm('Delete this diet plan?');"><i class="fas fa-trash"></i>Delete</a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No diet plans created yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

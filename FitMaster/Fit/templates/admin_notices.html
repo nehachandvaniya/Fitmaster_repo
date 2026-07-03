@@ -1,0 +1,138 @@
+﻿{% extends "adminnav.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/admin_notices.css' %}">
+{% endblock %}
+{% block navitems %}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="panel">
+            <h2 style="font-weight:700;margin-bottom:1rem;">{% if edit_notice %}Edit Notice{% else %}Create Notice{% endif %}</h2>
+            {% if saved %}<div style="padding:.8rem 1rem;border-radius:14px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);margin-bottom:1rem;">{{ saved }}</div>{% endif %}
+            <form method="post">
+                {% csrf_token %}
+                {% if edit_notice %}
+                <input type="hidden" name="notice_id" value="{{ edit_notice.id }}">
+                {% endif %}
+                <div class="mb-3">
+                    <label class="mb-2">Title</label>
+                    <input type="text" name="title" class="form-control-glass" value="{% if edit_notice %}{{ edit_notice.title }}{% endif %}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2">Message</label>
+                    <textarea name="message" class="form-textarea-glass" required>{% if edit_notice %}{{ edit_notice.message }}{% endif %}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2">Audience</label>
+                    <select name="audience" id="noticeAudience" class="form-select-glass" onchange="toggleRecipientField()">
+                        <option value="all" {% if edit_notice and edit_notice.audience == 'all' %}selected{% endif %}>Everyone</option>
+                        <option value="customers" {% if edit_notice and edit_notice.audience == 'customers' %}selected{% endif %}>All Customers</option>
+                        <option value="trainers" {% if edit_notice and edit_notice.audience == 'trainers' %}selected{% endif %}>All Trainers</option>
+                        <option value="specific_customer" {% if edit_notice and edit_notice.audience == 'specific_customer' %}selected{% endif %}>Specific Customer</option>
+                        <option value="specific_trainer" {% if edit_notice and edit_notice.audience == 'specific_trainer' %}selected{% endif %}>Specific Trainer</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="recipientField" style="display:none;">
+                    <label class="mb-2">Recipient</label>
+                    <select name="recipient_id" id="recipientSelect" class="form-select-glass">
+                        <option value="">Choose recipient</option>
+                        <optgroup label="Customers" id="customerRecipients">
+                            {% for customer in customers %}
+                            <option value="{{ customer.id }}" data-role="customer" {% if edit_notice and edit_notice.recipient_id == customer.id %}selected{% endif %}>{{ customer.firstname }} {{ customer.lastname }} - {{ customer.email }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="Trainers" id="trainerRecipients">
+                            {% for trainer in trainers %}
+                            <option value="{{ trainer.id }}" data-role="trainer" {% if edit_notice and edit_notice.recipient_id == trainer.id %}selected{% endif %}>{{ trainer.firstname }} {{ trainer.lastname }} - {{ trainer.email }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label style="display:flex; align-items:center; gap:.6rem;">
+                        <input type="checkbox" name="send_email" {% if edit_notice and edit_notice.send_email %}checked{% endif %}>
+                        <span>Send as email notification too</span>
+                    </label>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-gold w-100">{% if edit_notice %}Update Notice{% else %}Publish Notice{% endif %}</button>
+                    {% if edit_notice %}
+                    <a href="{% url 'admin_notices' %}" class="btn-admin-secondary">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="panel">
+            <h2 style="font-weight:700;margin-bottom:1rem;">Published Notices</h2>
+            {% for notice in notices %}
+            <div class="notice-item">
+                <div style="font-weight:700;">{{ notice.title }}</div>
+                <div style="font-size:.82rem; color:rgba(255,255,255,.62); margin-top:.25rem;">
+                    Audience:
+                    {% if notice.audience == 'specific_customer' or notice.audience == 'specific_trainer' %}
+                        {{ notice.get_audience_display }}{% if notice.recipient %} - {{ notice.recipient.firstname }} {{ notice.recipient.lastname }}{% endif %}
+                    {% else %}
+                        {{ notice.get_audience_display }}
+                    {% endif %}
+                    {% if notice.send_email %}
+                        | Email {% if notice.email_sent_at %}sent{% else %}requested{% endif %}
+                    {% endif %}
+                </div>
+                <div style="color:rgba(255,255,255,.78);margin-top:.3rem;">{{ notice.message }}</div>
+                <div style="font-size:.82rem;color:rgba(255,255,255,.52);margin-top:.45rem;">{{ notice.created_at|date:"d M Y, h:i A" }}</div>
+                <div style="display:flex;gap:.6rem;margin-top:.85rem;">
+                    <a href="{% url 'admin_notices' %}?edit={{ notice.id }}" class="btn-admin-secondary">Edit</a>
+                    <a href="{% url 'delete_notice' notice.id %}" class="btn-admin-danger" onclick="return confirm('Delete this notice?')">Delete</a>
+                </div>
+            </div>
+            {% empty %}
+            <p style="margin:0;">No notices created yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    function toggleRecipientField() {
+        const audience = document.getElementById('noticeAudience');
+        const recipientField = document.getElementById('recipientField');
+        const recipientSelect = document.getElementById('recipientSelect');
+        const customerGroup = document.getElementById('customerRecipients');
+        const trainerGroup = document.getElementById('trainerRecipients');
+
+        if (!audience || !recipientField || !recipientSelect) {
+            return;
+        }
+
+        const value = audience.value;
+        const needsRecipient = value === 'specific_customer' || value === 'specific_trainer';
+        recipientField.style.display = needsRecipient ? 'block' : 'none';
+
+        if (customerGroup) {
+            customerGroup.style.display = value === 'specific_trainer' ? 'none' : 'block';
+        }
+        if (trainerGroup) {
+            trainerGroup.style.display = value === 'specific_customer' ? 'none' : 'block';
+        }
+
+        Array.from(recipientSelect.options).forEach(option => {
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+            if (value === 'specific_customer') {
+                option.hidden = option.dataset.role !== 'customer';
+            } else if (value === 'specific_trainer') {
+                option.hidden = option.dataset.role !== 'trainer';
+            } else {
+                option.hidden = false;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', toggleRecipientField);
+</script>
+{% endblock %}
+

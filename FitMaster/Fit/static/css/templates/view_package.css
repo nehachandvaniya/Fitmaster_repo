@@ -1,0 +1,52 @@
+﻿.package-view-wrap {
+        display: grid;
+        gap: 1.5rem;
+    }
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px;
+        padding: 1.5rem;
+        color: white;
+    }
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+    .summary-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 1.2rem;
+    }
+    .summary-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        margin-bottom: 0.35rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .summary-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #ffd966;
+    }
+    .member-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+    }
+    .member-table th,
+    .member-table td {
+        padding: 1rem 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: left;
+    }
+    .member-table th {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }

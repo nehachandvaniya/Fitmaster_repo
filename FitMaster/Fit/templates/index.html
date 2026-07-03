@@ -1,0 +1,432 @@
+{% extends "nav.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/index.css' %}">
+{% endblock %}
+{% block content %}
+{% if login %}
+<div class="container">
+  <section class="member-home">
+    <div class="member-hero" data-aos="fade-up">
+      <div>
+        <div class="member-badge"><i class="fas fa-bolt"></i> Member Home</div>
+        <h1>Welcome back, {{ home_user.firstname|default:home_user.email }}.</h1>
+        {% if active_membership %}
+        <p>Your {{ active_membership.package.name }} membership is active until {{ active_membership.end_date|date:"d M Y" }}. Jump back into your plan, review your trainer support, or continue shopping essentials.</p>
+        {% else %}
+        <p>You are logged in and ready to go. Pick a membership, connect with a trainer, and start building a structured routine from your home dashboard.</p>
+        {% endif %}
+        <div class="member-hero-actions">
+          <a href="{% url 'myplan' %}" class="member-cta member-cta-primary"><i class="fas fa-chart-line"></i>Open My Plan</a>
+          <a href="{% url 'usermember' %}" class="member-cta member-cta-secondary"><i class="fas fa-crown"></i>{% if active_membership %}Manage Membership{% else %}Choose Membership{% endif %}</a>
+          <a href="{% url 'store' %}" class="member-cta member-cta-secondary"><i class="fas fa-store"></i>Visit Store</a>
+        </div>
+      </div>
+      <div class="member-hero-side">
+        <div class="member-side-card">
+          <div class="side-label">Current Membership</div>
+          <div class="side-value">
+            {% if active_membership %}
+            {{ active_membership.package.name }}
+            {% else %}
+            Not active yet
+            {% endif %}
+          </div>
+        </div>
+        <div class="member-side-card">
+          <div class="side-label">Assigned Trainer</div>
+          <div class="side-value">
+            {% if active_membership and active_membership.trainer %}
+            {{ active_membership.trainer.users.firstname }} {{ active_membership.trainer.users.lastname }}
+            {% else %}
+            Choose a plan to unlock trainer support
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="member-metric">
+          <span>Cart Items</span>
+          <strong>{{ pending_cart_count }}</strong>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="member-metric">
+          <span>Orders Placed</span>
+          <strong>{{ order_count }}</strong>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="member-metric">
+          <span>Cart Total</span>
+          <strong>Rs. {{ cart_total }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="member-panel">
+          <div class="member-panel-head">
+            <h2>Membership Snapshot</h2>
+            <a href="{% url 'userprofile' %}" class="member-link">View Profile</a>
+          </div>
+          <div class="snapshot-grid">
+            <div class="snapshot-item">
+              <span>Status</span>
+              <strong>{% if active_membership %}Active{% else %}Pending Setup{% endif %}</strong>
+            </div>
+            <div class="snapshot-item">
+              <span>Trainer</span>
+              <strong>{% if active_membership and active_membership.trainer %}{{ active_membership.trainer.get_category_display }} with {{ active_membership.trainer.users.firstname }}{% else %}No trainer assigned{% endif %}</strong>
+            </div>
+            <div class="snapshot-item">
+              <span>Plan Ends</span>
+              <strong>{% if active_membership %}{{ active_membership.end_date|date:"d M Y" }}{% else %}Choose a package{% endif %}</strong>
+            </div>
+            <div class="snapshot-item">
+              <span>Latest BMI</span>
+              <strong>{% if latest_progress %}{{ latest_progress.bmi }} on {{ latest_progress.record_date|date:"d M Y" }}{% else %}No progress recorded yet{% endif %}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="member-panel">
+          <div class="member-panel-head">
+            <h2>Quick Actions</h2>
+          </div>
+          <div class="action-grid-home">
+            <a href="{% url 'trainer_detail' %}" class="home-action-card">
+              <i class="fas fa-user-group"></i>
+              <strong>Trainer Details</strong>
+              <span>See your assigned trainer and coaching support.</span>
+            </a>
+            <a href="{% url 'bmi_calculator' %}" class="home-action-card">
+              <i class="fas fa-calculator"></i>
+              <strong>Track BMI</strong>
+              <span>Update your fitness numbers and monitor changes.</span>
+            </a>
+            <a href="{% url 'user_orders' %}" class="home-action-card">
+              <i class="fas fa-bag-shopping"></i>
+              <strong>My Orders</strong>
+              <span>Check your recent product orders and totals.</span>
+            </a>
+            <a href="{% url 'cart_view' %}" class="home-action-card">
+              <i class="fas fa-cart-shopping"></i>
+              <strong>Open Cart</strong>
+              <span>Continue from the {{ pending_cart_count }} item{{ pending_cart_count|pluralize }} in your cart.</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="member-panel">
+          <div class="member-panel-head">
+            <h2>Recommended Products</h2>
+            <a href="{% url 'store' %}" class="member-link">Browse Store</a>
+          </div>
+          <div class="snapshot-grid">
+            {% for item in recent_products %}
+            <div class="snapshot-item">
+              <span>{{ item.category.name|default:"Fitness" }}</span>
+              <strong>{{ item.name }}</strong>
+              <div style="color:#f8cf5a; font-weight:700; margin-top:.4rem;">Rs. {{ item.price }}</div>
+              <a href="{% url 'product_detail' item.id %}" class="member-link" style="display:inline-block; margin-top:.55rem;">View Product</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="member-panel">
+          <div class="member-panel-head">
+            <h2>Latest Notices</h2>
+            <a href="{% url 'myplan' %}" class="member-link">Open Plan</a>
+          </div>
+          <div class="notice-stack">
+            {% for notice in home_notices %}
+            <div class="notice-card">
+              <strong>{{ notice.title }}</strong>
+              <p>{{ notice.message|truncatechars:140 }}</p>
+              <span>{{ notice.created_at|date:"d M Y, h:i A" }}</span>
+            </div>
+            {% empty %}
+            <div class="notice-card">
+              <strong>No new notices</strong>
+              <p>Your dashboard is clear right now. New updates from trainers or admins will appear here.</p>
+              <span>Stay consistent</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% else %}
+<div class="container">
+  <section class="hero-section" id="home">
+    <div class="row align-items-center">
+      <div class="col-lg-7" data-aos="fade-right">
+        <h1 class="hero-title">Transform Your Fitness Journey with FitMaster</h1>
+        <p class="hero-subtitle">Experience personalized training, smart diet plans, and expert guidance all in one place.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="heroCarousel" class="carousel slide hero-slider" data-bs-ride="carousel" data-bs-interval="5000" data-aos="fade-down">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" class="d-block w-100" alt="Gym Training">
+        <div class="carousel-caption">
+          <div class="slide-badge"><i class="fas fa-bolt"></i> Strength First</div>
+          <h3>Transform Your Body</h3>
+          <p>Join FitMaster AI and start your fitness journey with personalized training plans designed just for you.</p>
+          <a href="{% url 'usermember' %}" class="slide-cta"><i class="fas fa-crown"></i>Choose Membership</a>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" class="d-block w-100" alt="Yoga">
+        <div class="carousel-caption">
+          <div class="slide-badge"><i class="fas fa-leaf"></i> Recovery Flow</div>
+          <h3>Mind & Body Harmony</h3>
+          <p>Experience the perfect balance with our expert yoga instructors and meditation sessions.</p>
+          <a href="{% url 'trainer_detail' %}" class="slide-cta"><i class="fas fa-user-tie"></i>See Trainer</a>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="https://images.unsplash.com/photo-1518611012118-696072a579f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" class="d-block w-100" alt="Personal Training">
+        <div class="carousel-caption">
+          <div class="slide-badge"><i class="fas fa-fire"></i> Guided Coaching</div>
+          <h3>Personal Training</h3>
+          <p>Get one-on-one guidance from certified trainers to achieve your fitness goals faster.</p>
+          <a href="{% url 'myplan' %}" class="slide-cta"><i class="fas fa-chart-line"></i>Open My Plan</a>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" class="d-block w-100" alt="Zumba">
+        <div class="carousel-caption">
+          <div class="slide-badge"><i class="fas fa-music"></i> Cardio Energy</div>
+          <h3>Dance Your Way to Fitness</h3>
+          <p>Join our energetic Zumba classes and have fun while burning calories.</p>
+          <a href="{% url 'store' %}" class="slide-cta"><i class="fas fa-store"></i>Visit Store</a>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <section class="glass-section" data-aos="fade-up">
+    <h2 class="section-title">Why Choose FitMaster?</h2>
+    <p class="section-subtitle">Everything you need to achieve your fitness goals</p>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-solid fa-list-check"></i></div>
+          <h3 class="why-title">Exercise & Diet Plans</h3>
+          <p class="why-text">Smart workout and diet plans personalized just for you</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-users"></i></div>
+          <h3 class="why-title">Expert Trainers</h3>
+          <p class="why-text">Get guidance from certified trainers specializing in Gym, Yoga, and Zumba.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-chart-line"></i></div>
+          <h3 class="why-title">Track Progress</h3>
+          <p class="why-text">Monitor your weight, height, and fitness journey with detailed analytics.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-clock"></i></div>
+          <h3 class="why-title">Flexible Packages</h3>
+          <p class="why-text">Choose from 3 months, 6 months, or 1 year packages that suit your needs.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-store"></i></div>
+          <h3 class="why-title">Gym Store</h3>
+          <p class="why-text">Shop premium gym equipment, supplements, and accessories at best prices.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="glass-section showcase-section" data-aos="fade-up">
+    <div class="section-heading-row">
+      <div>
+        <h2 class="section-title">Available Trainers</h2>
+        <p class="section-subtitle">Meet the coaches ready to guide your gym, yoga, and zumba journey.</p>
+      </div>
+      <a href="{% url 'register' %}" class="btn-glass showcase-link">Join as Member</a>
+    </div>
+    <div class="row g-4">
+      {% for item in featured_trainers %}
+      <div class="col-md-6 col-xl-4">
+        <div class="glass-card trainer-showcase-card h-100">
+          <div class="trainer-showcase-top">
+            <span class="trainer-specialty">{{ item.specialty }}</span>
+            <span class="trainer-rating"><i class="fas fa-star"></i> {{ item.rating|default:"0" }}</span>
+          </div>
+          <h3>{{ item.name }}</h3>
+          <p class="trainer-specialization">{{ item.specialization }}</p>
+          <div class="trainer-meta-list">
+            <div><i class="fas fa-award"></i> {{ item.qualification }}</div>
+            <div><i class="fas fa-briefcase"></i> {{ item.experience }} years experience</div>
+            <div><i class="fas fa-comment-dots"></i> {{ item.feedback_count }} review{{ item.feedback_count|pluralize }}</div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="glass-card trainer-showcase-card">
+          <h3>No trainers available right now</h3>
+          <p class="mb-0">Trainer profiles will appear here as soon as they are added by the admin team.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="glass-section showcase-section" data-aos="fade-up">
+    <div class="section-heading-row">
+      <div>
+        <h2 class="section-title">Available Membership Plans</h2>
+        <p class="section-subtitle">Choose the package duration and support level that fits your routine best.</p>
+      </div>
+      <a href="{% url 'login' %}" class="btn-glass showcase-link">Login to Book</a>
+    </div>
+    <div class="row g-4">
+      {% for package in available_packages %}
+      <div class="col-md-6 col-xl-4">
+        <div class="glass-card package-showcase-card h-100">
+          <div class="package-pill">{{ package.duration_months }} Month Plan</div>
+          <h3>{{ package.name }}</h3>
+          <div class="package-price">Rs. {{ package.price }}</div>
+          <p>{{ package.description }}</p>
+          <a href="{% url 'register' %}" class="btn-glass w-100 text-center">Get Started</a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="glass-card package-showcase-card">
+          <h3>No membership plans available right now</h3>
+          <p class="mb-0">Membership plans will appear here once they are added.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="product-slider" data-aos="fade-up">
+    <h2 class="section-title" style="font-size: 2rem;">Shop Our Products</h2>
+    <p class="section-subtitle">Gym essentials at best prices</p>
+    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for slide in product_slides %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="row">
+            {% for i in slide %}
+            <div class="col-md-3">
+              <div class="glass-card product-card">
+                <div class="product-image">
+                  {% if i.image %}
+                  <img src="{{ i.image.url }}" alt="{{ i.name }}">
+                  {% else %}
+                  <img src="https://via.placeholder.com/400x300?text=FitMaster+Product" alt="{{ i.name }}">
+                  {% endif %}
+                </div>
+                <h3 class="product-title">{{ i.name }}</h3>
+                <div class="product-price">Rs. {{ i.price }}</div>
+                <a href="{% url 'product_detail' i.id %}" class="btn-glass w-100 text-center">View Product</a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="testimonial-slider mb-5" data-aos="fade-up">
+    <h2 class="section-title" style="font-size: 2rem;">What Our Members Say</h2>
+    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for item in testimonials %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="testimonial-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <p class="testimonial-text">"{{ item.comments }}"</p>
+          <div class="testimonial-name">{{ item.customer.firstname }} {{ item.customer.lastname }}</div>
+          <div class="testimonial-role">Rated {{ item.rating }}/5 for {{ item.trainer.get_category_display }} trainer {{ item.trainer.users.firstname }} {{ item.trainer.users.lastname }}</div>
+        </div>
+        {% empty %}
+        <div class="carousel-item active">
+          <div class="testimonial-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <p class="testimonial-text">"Member feedback will appear here as soon as customers start rating their trainer experience from the My Plan page."</p>
+          <div class="testimonial-name">FitMaster Members</div>
+          <div class="testimonial-role">Waiting for live feedback</div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
+{% endif %}
+{% endblock content %}

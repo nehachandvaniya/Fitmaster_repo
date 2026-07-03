@@ -1,0 +1,62 @@
+.membership-wrap { max-width: 1320px; margin: 0 auto; padding: 2rem 1rem 3rem; color: white; }
+  .card-glass, .summary-panel {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 26px;
+  }
+  .section-title { font-size: 1.45rem; font-weight: 700; margin-bottom: 1rem; }
+  .package-card, .trainer-card { padding: 1.5rem; height: 100%; cursor: pointer; transition: .22s ease; position: relative; overflow: hidden; }
+  .package-card.disabled-card, .trainer-card.disabled-card {
+    cursor: not-allowed;
+    opacity: .58;
+    transform: none;
+    box-shadow: none;
+  }
+  .package-card::before, .trainer-card::before {
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(248,200,75,0.08), transparent 60%);
+    opacity: 0;
+    transition: .22s ease;
+  }
+  .package-card:hover, .trainer-card:hover,
+  .package-card.selected, .trainer-card.selected {
+    transform: translateY(-4px);
+    border-color: rgba(248,200,75,.48);
+    box-shadow: 0 18px 36px rgba(0,0,0,.18);
+  }
+  .package-card.disabled-card:hover, .trainer-card.disabled-card:hover,
+  .package-card.disabled-card.selected, .trainer-card.disabled-card.selected {
+    transform: none;
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: none;
+  }
+  .package-card:hover::before, .trainer-card:hover::before,
+  .package-card.selected::before, .trainer-card.selected::before { opacity: 1; }
+  .package-card.disabled-card::before, .trainer-card.disabled-card::before { opacity: 0; }
+  .package-card > *, .trainer-card > * { position: relative; z-index: 1; }
+  .package-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 12px; border-radius:999px;
+    background: rgba(255,255,255,.06); color:#f8c84b;
+    font-size:.8rem; font-weight:700; margin-bottom: 1rem;
+  }
+  .price { font-size: 2rem; font-weight: 800; color:#f8c84b; }
+  .package-copy, .trainer-copy { color: rgba(255,255,255,.72); line-height: 1.65; }
+  .trainer-name { font-size: 1.18rem; font-weight: 700; }
+  .trainer-meta { color:#f8c84b; font-weight:700; margin:.35rem 0; }
+  .summary-panel { padding: 1.5rem; position: sticky; top: 88px; }
+  .summary-row { display:flex; justify-content:space-between; gap:12px; padding:.9rem 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .summary-row span { color: rgba(255,255,255,.68); }
+  .summary-row strong { text-align:right; }
+  .cta-btn {
+    width:100%; margin-top: 1rem; border:none; border-radius:999px; padding:16px 20px;
+    background: linear-gradient(135deg,#f8cf5a,#f59e0b); color:#07111c; font-weight:800;
+  }
+  .helper-list { display:grid; gap:12px; margin-top: 1rem; color: rgba(255,255,255,.7); }
+  .helper-list div { display:flex; gap:10px; align-items:flex-start; }
+  .helper-list i { color:#f8c84b; margin-top:4px; }
+  @media (max-width: 991px) {
+    .summary-panel { position: static; }
+  }

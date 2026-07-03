@@ -1,0 +1,93 @@
+﻿{% extends "adminnav.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/admintrainer.css' %}">
+<style>
+    .trainer-table th {
+        color: #f3f4f6 !important;
+    }
+    .trainer-table td,
+    .trainer-table td * {
+        color: #ffffff !important;
+    }
+    .metric,
+    .metric *:not(strong) {
+        color: #ffffff !important;
+    }
+    .panel {
+        background: rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 20px !important;
+    }
+    .metric {
+        background: rgba(255,255,255,0.08) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 20px !important;
+    }
+</style>
+{% endblock %}
+{% block navitems %}
+
+
+<div class="page-header-mobile d-md-none">
+    <div class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></div>
+    <h2 class="page-title-mobile">Trainer Management</h2>
+</div>
+
+<div class="d-none d-md-flex justify-content-between align-items-center mb-4">
+    <h2 style="color:white; font-weight:700; margin:0;">Trainer Management</h2>
+    <a href="{% url 'register' %}" class="btn-admin-primary"><i class="fas fa-user-plus me-2"></i>Add Trainer</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="metric"><strong>{{ trainers|length }}</strong>Total Trainers</div></div>
+    <div class="col-md-3"><div class="metric"><strong>{{ active_trainers }}</strong>Active</div></div>
+    <div class="col-md-2"><div class="metric"><strong>{{ gym_trainers }}</strong>Gym</div></div>
+    <div class="col-md-2"><div class="metric"><strong>{{ yoga_trainers }}</strong>Yoga</div></div>
+    <div class="col-md-2"><div class="metric"><strong>{{ zumba_trainers }}</strong>Zumba</div></div>
+</div>
+
+<div class="panel">
+    <div class="table-responsive">
+        <table class="trainer-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Category</th>
+                    <th>Experience</th>
+                    <th>Students</th>
+                    <th>Rating</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trainer in trainers %}
+                <tr>
+                    <td>#{{ trainer.id }}</td>
+                    <td>{{ trainer.name }}</td>
+                    <td>{{ trainer.email }}</td>
+                    <td>{{ trainer.phone }}</td>
+                    <td><span class="badge-role">{{ trainer.specialty|title }}</span></td>
+                    <td>{{ trainer.experience }} years</td>
+                    <td>{{ trainer.student_count }}</td>
+                    <td>{{ trainer.rating }}</td>
+                    <td>Active</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="color: rgba(255,255,255,0.7); text-align:center;">No trainers found yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

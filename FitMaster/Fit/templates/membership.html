@@ -1,0 +1,135 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block title %}Membership{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/membership.css' %}">
+{% endblock %}
+{% block content %}
+
+
+<div class="membership-wrap">
+  {% if messages %}
+  <div style="display:grid; gap:12px; margin-bottom:1.2rem;">
+    {% for message in messages %}
+    <div style="padding: 14px 16px; border-radius: 16px; color: white; {% if message.tags == 'error' %}background: rgba(248,113,113,.14); border: 1px solid rgba(248,113,113,.28);{% else %}background: rgba(74,222,128,.14); border: 1px solid rgba(74,222,128,.28);{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if active_membership %}
+  <div style="padding: 14px 16px; border-radius: 16px; color: white; background: rgba(59,130,246,.14); border: 1px solid rgba(59,130,246,.28); margin-bottom: 1.2rem;">
+    Your current membership is <strong>{{ active_membership.package.name }}</strong> and stays active until <strong>{{ active_membership.end_date|date:"d M Y" }}</strong>. You can purchase a new membership only after this plan ends.
+  </div>
+  {% else %}
+  <div style="padding: 14px 16px; border-radius: 16px; color: white; background: rgba(248,200,75,.14); border: 1px solid rgba(248,200,75,.28); margin-bottom: 1.2rem;">
+    You need an active membership before using the full member experience. Choose a package, optionally select a trainer, and your membership will start immediately after payment.
+  </div>
+  {% endif %}
+
+  <form method="post" id="membershipForm">
+    {% csrf_token %}
+    <input type="hidden" name="package_id" id="package_id">
+    <input type="hidden" name="trainer_id" id="trainer_id" value="0">
+
+    <div class="row g-4">
+      <div class="col-xl-8">
+        <div class="section-title">Choose Your Package</div>
+        <div class="row g-4 mb-4">
+          {% for package in packages %}
+          <div class="col-md-6">
+            <div class="card-glass package-card{% if active_membership %} disabled-card{% endif %}" {% if not active_membership %}onclick="selectPackage(this, '{{ package.id }}', '{{ package.name|escapejs }}', '{{ package.price }}', '{{ package.duration_months }} months')"{% endif %}>
+              <div class="package-badge"><i class="fas fa-fire"></i>{{ package.duration_months }} Month Plan</div>
+              <div style="font-size: 1.35rem; font-weight: 700; margin-bottom: .45rem;">{{ package.name }}</div>
+              <div class="price">Rs. {{ package.price }}</div>
+              <p class="package-copy mt-3 mb-0">{{ package.description }}</p>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12"><div class="card-glass package-card">No packages are available right now.</div></div>
+          {% endfor %}
+        </div>
+
+        <div class="section-title">Choose Trainer Support</div>
+        <div class="row g-4">
+          <div class="col-md-6 col-xl-4">
+            <div class="card-glass trainer-card selected{% if active_membership %} disabled-card{% endif %}" {% if not active_membership %}onclick="selectTrainer(this, '0', 'Self-guided')"{% endif %}>
+              <div class="trainer-name">Self-guided</div>
+              <div class="trainer-meta">No trainer assigned</div>
+              <p class="trainer-copy mb-0">Best if you already know your routine and only need package access.</p>
+            </div>
+          </div>
+          {% for trainer in trainers %}
+          <div class="col-md-6 col-xl-4">
+            <div class="card-glass trainer-card{% if active_membership %} disabled-card{% endif %}" {% if not active_membership %}onclick="selectTrainer(this, '{{ trainer.id }}', '{{ trainer.name|escapejs }}')"{% endif %}>
+              <div class="trainer-name">{{ trainer.name }}</div>
+              <div class="trainer-meta">{{ trainer.specialty|title }}</div>
+              <p class="trainer-copy mb-0">{{ trainer.experience }} years experience | Rating {{ trainer.rating }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-xl-4">
+        <div class="summary-panel">
+          <div class="section-title">Membership Summary</div>
+          <div class="summary-row"><span>Package</span><strong id="summary_package">Not selected</strong></div>
+          <div class="summary-row"><span>Duration</span><strong id="summary_duration">-</strong></div>
+          <div class="summary-row"><span>Trainer</span><strong id="summary_trainer">Self-guided</strong></div>
+          <div class="summary-row"><span>Total</span><strong id="summary_total">Rs. 0</strong></div>
+          <div style="display:grid; gap:12px;">
+            <button type="submit" class="cta-btn" id="bookBtn" disabled{% if active_membership %} title="Current membership is still active"{% endif %}>
+              {% if active_membership %}Wait Until Current Plan Ends{% else %}Book with Cash on Delivery{% endif %}
+            </button>
+          </div>
+          <div class="helper-list">
+            <div><i class="fas fa-check-circle"></i><span>Membership starts immediately after confirmation.</span></div>
+            <div><i class="fas fa-money-bill-wave"></i><span>Book now and pay with cash on delivery.</span></div>
+            <div><i class="fas fa-chart-line"></i><span>You can track everything later from My Plan.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  const membershipForm = document.getElementById('membershipForm');
+  const bookBtn = document.getElementById('bookBtn');
+  const hasActiveMembership = {% if active_membership %}true{% else %}false{% endif %};
+
+  function selectPackage(el, id, name, price, duration) {
+    if (hasActiveMembership) {
+      return;
+    }
+    document.querySelectorAll('.package-card').forEach(card => card.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('package_id').value = id;
+    document.getElementById('summary_package').textContent = name;
+    document.getElementById('summary_duration').textContent = duration;
+    document.getElementById('summary_total').textContent = 'Rs. ' + price;
+    bookBtn.disabled = false;
+  }
+
+  function selectTrainer(el, id, name) {
+    if (hasActiveMembership) {
+      return;
+    }
+    document.querySelectorAll('.trainer-card').forEach(card => card.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('trainer_id').value = id;
+    document.getElementById('summary_trainer').textContent = name;
+  }
+
+  membershipForm.addEventListener('submit', function (event) {
+    if (hasActiveMembership) {
+      event.preventDefault();
+      alert('Your current membership is still active. You can purchase a new one after it ends.');
+      return;
+    }
+  });
+</script>
+{% endblock %}
+

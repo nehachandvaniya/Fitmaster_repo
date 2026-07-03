@@ -1,0 +1,320 @@
+{% extends "nav.html" %}
+{% load static %}
+{% block title %}BMI Calculator{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/bmi.css' %}">
+{% endblock %}
+{% block content %}
+<div class="bmi-container">
+  {% if messages %}
+  <div style="display:grid; gap:12px; margin-bottom:1rem;">
+    {% for message in messages %}
+    <div style="padding:14px 16px; border-radius:16px; color:white; background:rgba(74,222,128,.14); border:1px solid rgba(74,222,128,.28);">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="bmi-header" data-aos="fade-down">
+    <h1><i class="fas fa-calculator me-3"></i>BMI Calculator</h1>
+    <p>Calculate your Body Mass Index, save it to your account, and track progress over time.</p>
+  </div>
+
+  <div class="unit-toggle" data-aos="fade-down" data-aos-delay="50">
+    <div class="unit-btn active" data-unit="metric" onclick="setUnit('metric', this)">Metric (kg/cm)</div>
+    <div class="unit-btn" data-unit="imperial" onclick="setUnit('imperial', this)">Imperial (lbs/in)</div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5" data-aos="fade-right">
+      <div class="input-card">
+        <h3 class="input-title"><i class="fas fa-pen-alt me-2"></i>Your Details</h3>
+        <form method="post" id="bmiForm">
+          {% csrf_token %}
+          <input type="hidden" name="unit" id="unitField" value="metric">
+
+          <div class="input-group-custom">
+            <label><i class="fas fa-venus-mars me-2"></i>Gender</label>
+            <div class="gender-options">
+              <div class="gender-option {% if selected_gender != 'female' %}active{% endif %}" onclick="selectGender(this, 'male')">
+                <i class="fas fa-mars"></i>
+                <span>Male</span>
+              </div>
+              <div class="gender-option {% if selected_gender == 'female' %}active{% endif %}" onclick="selectGender(this, 'female')">
+                <i class="fas fa-venus"></i>
+                <span>Female</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group-custom metric-field">
+            <label><i class="fas fa-ruler-vertical me-2"></i>Height (cm)</label>
+            <input type="number" id="height_cm" name="height_cm" placeholder="Enter your height in cm" value="{% if latest_progress %}{{ latest_progress.height }}{% else %}170{% endif %}" step="0.01">
+          </div>
+
+          <div class="input-group-custom imperial-field" style="display: none;">
+            <label><i class="fas fa-ruler-vertical me-2"></i>Height (ft/in)</label>
+            <div style="display: flex; gap: 1rem;">
+              <input type="number" id="height_ft" name="height_ft" placeholder="Feet" style="width: 50%;" value="5">
+              <input type="number" id="height_in" name="height_in" placeholder="Inches" style="width: 50%;" value="7">
+            </div>
+          </div>
+
+          <div class="input-group-custom metric-field">
+            <label><i class="fas fa-weight-hanging me-2"></i>Weight (kg)</label>
+            <input type="number" id="weight_kg" name="weight_kg" placeholder="Enter your weight in kg" value="{% if latest_progress %}{{ latest_progress.weight }}{% else %}70{% endif %}" step="0.01">
+          </div>
+
+          <div class="input-group-custom imperial-field" style="display: none;">
+            <label><i class="fas fa-weight-hanging me-2"></i>Weight (lbs)</label>
+            <input type="number" id="weight_lbs" name="weight_lbs" placeholder="Enter your weight in lbs" value="154" step="0.01">
+          </div>
+
+          <button type="button" class="btn-calculate" onclick="calculateBMI()">
+            <i class="fas fa-chart-line me-2"></i>Calculate BMI
+          </button>
+          {% if login %}
+          <button type="submit" class="btn-calculate" style="margin-top:.75rem;">
+            <i class="fas fa-floppy-disk me-2"></i>Save BMI Record
+          </button>
+          {% else %}
+          <div style="margin-top:1rem; color: rgba(255,255,255,0.68); font-size:0.95rem;">
+            Log in to save BMI records and build your personal history.
+          </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-7" data-aos="fade-left">
+      <div class="result-card">
+        <h3 class="input-title"><i class="fas fa-chart-simple me-2"></i>Your BMI Result</h3>
+
+        <div class="bmi-value" id="bmiValue">{% if latest_progress %}{{ latest_progress.bmi }}{% else %}24.2{% endif %}</div>
+        <div class="bmi-category" id="bmiCategory" style="color: {{ bmi_insights.color }};">{{ bmi_insights.category }}</div>
+        <div class="bmi-description" id="bmiDescription">{{ bmi_insights.description }}</div>
+
+        <div class="bmi-progress-container">
+          <div class="bmi-scale">
+            <div class="bmi-indicator" id="bmiIndicator" style="left: {{ bmi_insights.indicator_position }}%;"></div>
+          </div>
+          <div class="bmi-labels">
+            <span>Underweight</span>
+            <span>Normal</span>
+            <span>Overweight</span>
+            <span>Obese</span>
+          </div>
+          <div class="bmi-ranges">
+            <div class="range-item range-underweight">&lt; 18.5</div>
+            <div class="range-item range-normal">18.5 - 24.9</div>
+            <div class="range-item range-overweight">25 - 29.9</div>
+            <div class="range-item range-obese">&ge; 30</div>
+          </div>
+        </div>
+
+        <div class="mt-3" style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1rem;">
+          <p style="margin: 0; color: rgba(255,255,255,0.7);">
+            <i class="fas fa-heartbeat me-2" style="color: #ffd966;"></i>
+            <strong>Healthy Weight Range:</strong>
+            <span id="healthyRange">{{ bmi_insights.healthy_range }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="health-tips" data-aos="fade-up">
+    <h3><i class="fas fa-lightbulb me-2"></i>Health Tips</h3>
+    <ul class="tips-list" id="healthTips">
+      {% for tip in bmi_insights.tips %}
+      <li>{{ tip }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="history-table" data-aos="fade-up">
+    <h3><i class="fas fa-history me-2"></i>Recent BMI Records</h3>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Weight (kg)</th>
+            <th>Height (cm)</th>
+            <th>BMI</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable">
+          {% if login %}
+            {% for item in progresses %}
+            <tr>
+              <td>{{ item.record_date|date:"M j, Y" }}</td>
+              <td>{{ item.weight }}</td>
+              <td>{{ item.height }}</td>
+              <td>{{ item.bmi }}</td>
+              <td><span style="color: {% if item.bmi < 18.5 %}#2ecc71{% elif item.bmi < 25 %}#f1c40f{% elif item.bmi < 30 %}#e67e22{% else %}#e74c3c{% endif %};">{% if item.bmi < 18.5 %}Underweight{% elif item.bmi < 25 %}Normal Weight{% elif item.bmi < 30 %}Overweight{% else %}Obese{% endif %}</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5">No saved BMI records yet. Calculate and save your first one.</td>
+            </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="5">Log in to save BMI records and view your personal history.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  let currentUnit = 'metric';
+  let selectedGender = '{{ selected_gender|default:"male" }}';
+
+  function setUnit(unit, element) {
+    currentUnit = unit;
+    document.getElementById('unitField').value = unit;
+
+    document.querySelectorAll('.unit-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    if (element) {
+      element.classList.add('active');
+    }
+
+    if (unit === 'metric') {
+      document.querySelectorAll('.metric-field').forEach(el => el.style.display = 'block');
+      document.querySelectorAll('.imperial-field').forEach(el => el.style.display = 'none');
+    } else {
+      document.querySelectorAll('.metric-field').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.imperial-field').forEach(el => el.style.display = 'block');
+    }
+
+    calculateBMI();
+  }
+
+  function selectGender(element, gender) {
+    selectedGender = gender;
+    document.querySelectorAll('.gender-option').forEach(opt => {
+      opt.classList.remove('active');
+    });
+    element.classList.add('active');
+  }
+
+  function updateHealthTips(category) {
+    const tipsByCategory = {
+      'Underweight': [
+        'Eat nutrient-dense foods like nuts, dairy, fruits, and whole grains.',
+        'Include strength training to support muscle gain.',
+        'Add 5-6 smaller meals through the day if large meals feel difficult.',
+        'Track progress weekly so your plan stays realistic and sustainable.'
+      ],
+      'Normal Weight': [
+        'Maintain a balanced diet with protein, fiber, and whole foods.',
+        'Aim for regular workouts through the week.',
+        'Keep hydration and sleep consistent to support recovery.',
+        'Recheck BMI regularly to stay on track.'
+      ],
+      'Overweight': [
+        'Reduce sugary drinks and highly processed foods.',
+        'Start with walking, cycling, or other repeatable cardio sessions.',
+        'Add strength training to preserve muscle while losing fat.',
+        'Set small weekly goals instead of chasing fast changes.'
+      ],
+      'Obese': [
+        'Start with low-impact movement and build gradually.',
+        'Follow a structured meal routine with portion control.',
+        'Track weight, BMI, and habits consistently.',
+        'Ask a healthcare professional for personalized guidance if needed.'
+      ]
+    };
+
+    const tipsList = document.getElementById('healthTips');
+    const tips = tipsByCategory[category] || tipsByCategory['Normal Weight'];
+    tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+  }
+
+  function calculateBMI() {
+    let height = 0;
+    let weight = 0;
+    let bmi = 0;
+
+    if (currentUnit === 'metric') {
+      height = parseFloat(document.getElementById('height_cm').value || 0) / 100;
+      weight = parseFloat(document.getElementById('weight_kg').value || 0);
+
+      if (height > 0 && weight > 0) {
+        bmi = weight / (height * height);
+      }
+    } else {
+      const feet = parseFloat(document.getElementById('height_ft').value || 0);
+      const inches = parseFloat(document.getElementById('height_in').value || 0);
+      const totalInches = (feet * 12) + inches;
+      const weightLbs = parseFloat(document.getElementById('weight_lbs').value || 0);
+
+      if (totalInches > 0 && weightLbs > 0) {
+        bmi = (weightLbs / (totalInches * totalInches)) * 703;
+        height = (totalInches * 2.54) / 100;
+      }
+    }
+
+    bmi = Math.round(bmi * 10) / 10;
+    document.getElementById('bmiValue').textContent = bmi > 0 ? bmi : '0.0';
+
+    let category = 'Normal Weight';
+    let description = 'You are in the healthy BMI range. Keep your meals, hydration, sleep, and workouts consistent.';
+    let color = '#f1c40f';
+    let indicatorPosition = 50;
+
+    if (bmi > 0 && bmi < 18.5) {
+      category = 'Underweight';
+      description = 'You are underweight. A balanced meal plan and strength work can help you build healthy weight.';
+      color = '#2ecc71';
+      indicatorPosition = (bmi / 18.5) * 25;
+    } else if (bmi >= 18.5 && bmi < 25) {
+      category = 'Normal Weight';
+      description = 'You are in the healthy BMI range. Keep your meals, hydration, sleep, and workouts consistent.';
+      color = '#f1c40f';
+      indicatorPosition = 25 + ((bmi - 18.5) / 6.5) * 25;
+    } else if (bmi >= 25 && bmi < 30) {
+      category = 'Overweight';
+      description = 'You are above the healthy BMI range. A steady routine with food control and training can help.';
+      color = '#e67e22';
+      indicatorPosition = 50 + ((bmi - 25) / 5) * 25;
+    } else if (bmi >= 30) {
+      category = 'Obese';
+      description = 'You are in the obese range. It is best to work with a doctor or coach on a gradual, safe plan.';
+      color = '#e74c3c';
+      indicatorPosition = 75 + Math.min(((bmi - 30) / 10) * 25, 25);
+    }
+
+    document.getElementById('bmiCategory').textContent = category;
+    document.getElementById('bmiCategory').style.color = color;
+    document.getElementById('bmiDescription').textContent = description;
+    document.getElementById('bmiIndicator').style.left = Math.min(Math.max(indicatorPosition, 0), 100) + '%';
+
+    if (height > 0) {
+      const minWeight = (18.5 * height * height).toFixed(1);
+      const maxWeight = (24.9 * height * height).toFixed(1);
+      document.getElementById('healthyRange').textContent = `${minWeight} kg - ${maxWeight} kg`;
+    } else {
+      document.getElementById('healthyRange').textContent = 'Enter height and weight to see your range.';
+    }
+
+    updateHealthTips(category);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#bmiForm input').forEach(input => {
+      input.addEventListener('input', calculateBMI);
+    });
+    calculateBMI();
+  });
+</script>
+{% endblock %}

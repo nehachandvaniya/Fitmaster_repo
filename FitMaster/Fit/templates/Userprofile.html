@@ -1,0 +1,127 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/Userprofile.css' %}">
+{% endblock %}
+{% block content %}
+
+
+<div class="profile-wrap">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="notice {% if message.tags == 'error' %}error{% else %}success{% endif %}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="metric-card"><strong>{{ profile_user.firstname }} {{ profile_user.lastname }}</strong>Member Name</div></div>
+    <div class="col-md-3"><div class="metric-card"><strong>{% if membership %}{{ membership.package.name }}{% else %}No Plan{% endif %}</strong>Current Package</div></div>
+    <div class="col-md-3"><div class="metric-card"><strong>{% if membership and membership.trainer %}{{ membership.trainer.users.firstname }}{% else %}Self-guided{% endif %}</strong>Trainer</div></div>
+    <div class="col-md-3"><div class="metric-card"><strong>{% if latest_progress %}{{ latest_progress.bmi }}{% else %}-{% endif %}</strong>Latest BMI</div></div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="glass-panel h-100">
+        <div class="section-title">Profile Snapshot</div>
+        <div class="profile-head">
+          <div class="profile-avatar">
+            {% if profile_user.profile_pic %}
+              <img src="{{ profile_user.profile_pic.url }}" alt="{{ profile_user.firstname }}">
+            {% else %}
+              <i class="fas fa-user"></i>
+            {% endif %}
+          </div>
+          <div class="profile-copy">
+            <h2>{{ profile_user.firstname }} {{ profile_user.lastname }}</h2>
+            <p>{{ profile_user.email }}</p>
+            <p>{{ profile_user.mobile }}</p>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <strong>Address</strong>
+          <div>{{ profile_user.address|default:"Not added yet" }}</div>
+        </div>
+        <div class="stat-item">
+          <strong>Location</strong>
+          <div>{{ profile_user.city|default:"-" }}, {{ profile_user.state|default:"-" }} - {{ profile_user.pincode|default:"-" }}</div>
+        </div>
+        <div class="stat-item">
+          <strong>Gender</strong>
+          <div>{{ profile_user.gender|default:"Not selected" }}</div>
+        </div>
+        <div class="stat-item">
+          <strong>Membership Status</strong>
+          <div>{% if membership %}{{ membership.status }} until {{ membership.end_date|date:"d M Y" }}{% else %}No active membership{% endif %}</div>
+        </div>
+        <div class="stat-item" style="margin-bottom:0;">
+          <strong>Latest Progress</strong>
+          <div>{% if latest_progress %}{{ latest_progress.weight }} kg, {{ latest_progress.height }} cm, BMI {{ latest_progress.bmi }}{% else %}No progress records yet{% endif %}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="glass-panel">
+        <div class="section-title">Edit Profile</div>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="mb-2">First Name</label>
+              <input type="text" name="firstname" class="form-control-glass" value="{{ profile_user.firstname|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">Last Name</label>
+              <input type="text" name="lastname" class="form-control-glass" value="{{ profile_user.lastname|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">Email</label>
+              <input type="email" name="email" class="form-control-glass" value="{{ profile_user.email }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">Mobile</label>
+              <input type="text" name="mobile" class="form-control-glass" value="{{ profile_user.mobile|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">City</label>
+              <input type="text" name="city" class="form-control-glass" value="{{ profile_user.city|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">State</label>
+              <input type="text" name="state" class="form-control-glass" value="{{ profile_user.state|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">Pincode</label>
+              <input type="text" name="pincode" class="form-control-glass" value="{{ profile_user.pincode|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="mb-2">Gender</label>
+              <select name="gender" class="form-select-glass">
+                <option value="">Select gender</option>
+                <option value="Male" {% if profile_user.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if profile_user.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if profile_user.gender == 'Other' %}selected{% endif %}>Other</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="mb-2">Address</label>
+              <textarea name="address" class="form-textarea-glass">{{ profile_user.address|default:'' }}</textarea>
+            </div>
+            <div class="col-12">
+              <label class="mb-2">Profile Picture</label>
+              <input type="file" name="profile_pic" class="form-control-glass" accept="image/*">
+            </div>
+            <div class="col-12">
+              <button type="submit" class="cta-btn">Save Profile Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,64 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}Customer Progress{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/trainer_progress.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>Customer Progress</h1>
+    <p>Track the latest BMI, weight, and height records submitted by your assigned customers.</p>
+  </div>
+  <a href="{% url 'trainer_customers' %}" class="btn-gold"><i class="fas fa-users"></i>My Customers</a>
+</div>
+
+<div class="summary-grid">
+  {% for card in customer_progress_cards %}
+  <div class="summary-card">
+    <div style="font-weight:700;">{{ card.customer_name }}</div>
+    <div style="color:rgba(255,255,255,.68);margin:.35rem 0;">{{ card.package_name }}</div>
+    {% if card.latest %}
+      <strong>{{ card.latest.bmi }}</strong>
+      <div style="color:rgba(255,255,255,.68);">BMI | {{ card.latest.weight }} kg | {{ card.latest.height }} cm</div>
+    {% else %}
+      <strong>No Data</strong>
+      <div style="color:rgba(255,255,255,.68);">No progress entry submitted yet</div>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div class="summary-card">No customer progress is available yet.</div>
+  {% endfor %}
+</div>
+
+<div class="panel">
+  <div class="table-responsive">
+    <table class="table-lite">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Weight</th>
+          <th>Height</th>
+          <th>BMI</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in progresses %}
+        <tr>
+          <td>{{ item.customer.firstname }} {{ item.customer.lastname }}</td>
+          <td>{{ item.record_date|date:"d M Y" }}</td>
+          <td>{{ item.weight }} kg</td>
+          <td>{{ item.height }} cm</td>
+          <td>{{ item.bmi }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No progress entries found for your customers.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+

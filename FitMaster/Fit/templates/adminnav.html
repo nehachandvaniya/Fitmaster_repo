@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitMaster - Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/templates/adminnav.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Mobile Menu Toggle (visible only on mobile) -->
+    <div class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="admin-wrapper">
+        <!-- Admin Sidebar -->
+        <div class="admin-sidebar" id="adminSidebar" data-aos="fade-right">
+            <div class="admin-sidebar-header">
+                <h3>Admin Dashboard</h3>
+                <p>Welcome back, Admin</p>
+            </div>
+            
+            <div class="admin-nav-label">MAIN</div>
+            <a href="{% url 'dash' %}" class="admin-nav-item" data-nav="dashboard">
+                <i class="fas fa-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'adminpackage' %}" class="admin-nav-item" data-nav="packages">
+                <i class="fas fa-box"></i>
+                <span>Packages</span>
+            </a>
+            <a href="{% url 'admincustomer' %}" class="admin-nav-item" data-nav="customers">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="{% url 'admintrainer' %}" class="admin-nav-item" data-nav="trainers">
+                <i class="fas fa-user-tie"></i>
+                <span>Trainers</span>
+            </a>
+            <a href="{% url 'adminproduct' %}" class="admin-nav-item" data-nav="products">
+                <i class="fas fa-cube"></i>
+                <span>Products</span>
+            </a>
+            <a href="{% url 'orderdisplay' %}" class="admin-nav-item" data-nav="orders">
+                <i class="fas fa-cart-shopping"></i>
+                <span>Orders</span>
+            </a>
+            
+            <div class="admin-nav-divider"></div>
+            <div class="admin-nav-label">TRANSACTIONS</div>
+            <a href="{% url 'admin_payments' %}" class="admin-nav-item" data-nav="payments">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+            <a href="{% url 'admin_invoices' %}" class="admin-nav-item" data-nav="invoices">
+                <i class="fas fa-file-invoice"></i>
+                <span>Invoices</span>
+            </a>
+            
+            <div class="admin-nav-divider"></div>
+            <div class="admin-nav-label">COMMUNICATION</div>
+            <a href="{% url 'admin_notices' %}" class="admin-nav-item" data-nav="notices">
+                <i class="fas fa-bell"></i>
+                <span>Notices</span>
+            </a>
+            <a href="{% url 'admin_feedback' %}" class="admin-nav-item" data-nav="feedback">
+                <i class="fas fa-star"></i>
+                <span>Feedback</span>
+            </a>
+            
+            <div class="admin-nav-divider"></div>
+            <div class="admin-nav-label">SETTINGS</div>
+            <a href="{% url 'logout' %}" class="admin-nav-item" data-nav="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+
+        <div class="admin-main container-fluid" id="adminMain">
+            {% block navitems %}
+            {% endblock navitems %}
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+        
+        // ===== ACTIVE LINK HIGHLIGHTING =====
+        // Function to set active class based on current URL
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.admin-nav-item');
+            
+            // Remove active class from all nav items
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Check each nav item's href
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && href !== '#') {
+                    // Extract the URL name from href (handles Django URLs)
+                    let hrefPath = href;
+                    
+                    // If href contains quotes (from Django template), extract the actual path
+                    if (href.includes('"')) {
+                        // This is a Django template URL, we need to match by data-nav or URL pattern
+                        const navValue = item.getAttribute('data-nav');
+                        if (navValue) {
+                            // Check if current path contains the nav value
+                            if (currentPath.includes(navValue) || 
+                                (navValue === 'dashboard' && (currentPath === '/' || currentPath === '/admin/' || currentPath.includes('dashboard')))) {
+                                item.classList.add('active');
+                            }
+                        }
+                    } else {
+                        // Normal URL comparison
+                        if (currentPath === href) {
+                            item.classList.add('active');
+                        }
+                        // For parent pages (e.g., /admin/customer/ matches /admin/customer)
+                        else if (href !== '/' && currentPath.startsWith(href) && href !== currentPath) {
+                            if (currentPath.charAt(href.length) === '/' || currentPath.length === href.length) {
+                                item.classList.add('active');
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // If still no active found, try matching by data-nav attribute
+            const hasActive = document.querySelector('.admin-nav-item.active');
+            if (!hasActive) {
+                const currentPath = window.location.pathname;
+                const navItemsByData = document.querySelectorAll('.admin-nav-item[data-nav]');
+                
+                navItemsByData.forEach(item => {
+                    const navValue = item.getAttribute('data-nav');
+                    if (navValue && currentPath.includes(navValue)) {
+                        item.classList.add('active');
+                    } else if (navValue === 'dashboard' && (currentPath === '/' || currentPath === '/admin/' || currentPath.includes('dashboard'))) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        // Set active on page load
+        setActiveNavItem();
+        
+        // ===== MOBILE MENU TOGGLE =====
+        const sidebar = document.getElementById('adminSidebar');
+        const mainContent = document.getElementById('adminMain');
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('padded');
+            
+            // Change icon
+            const icon = mobileToggle?.querySelector('i');
+            if (icon) {
+                if (sidebar.classList.contains('open')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile && sidebar.classList.contains('open')) {
+                if (!sidebar.contains(event.target) && !mobileToggle?.contains(event.target)) {
+                    toggleSidebar();
+                }
+            }
+        });
+        
+        // Toggle on button click
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', toggleSidebar);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('padded');
+                if (mobileToggle) {
+                    const icon = mobileToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            }
+        });
+        
+        // Update active state when using browser back/forward buttons
+        window.addEventListener('popstate', function() {
+            setActiveNavItem();
+        });
+        
+        // Also update active state when clicking on navigation links (before page unload)
+        document.querySelectorAll('.admin-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href !== '#' && !href.startsWith('javascript:')) {
+                    // Remove active from all and add to clicked item (visual feedback)
+                    document.querySelectorAll('.admin-nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

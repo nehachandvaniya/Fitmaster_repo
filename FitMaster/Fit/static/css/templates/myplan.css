@@ -1,0 +1,243 @@
+.myplan-wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  color: #ffffff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.myplan-wrap,
+.myplan-wrap .hero-panel,
+.myplan-wrap .glass-panel,
+.myplan-wrap .metric,
+.myplan-wrap .table-lite td,
+.myplan-wrap .stat-item,
+.myplan-wrap label,
+.myplan-wrap p,
+.myplan-wrap li {
+  color: #ffffff;
+}
+
+.myplan-wrap .hero-panel,
+.myplan-wrap .glass-panel,
+.myplan-wrap .metric {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 26px;
+}
+
+.myplan-wrap .hero-panel {
+  padding: 1.8rem;
+  margin-bottom: 1.6rem;
+}
+
+.myplan-wrap .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(248, 200, 75, 0.12);
+  color: #f8c84b;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.myplan-wrap .hero-title,
+.myplan-wrap .section-title,
+.myplan-wrap .metric strong,
+.myplan-wrap .stat-item strong {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.myplan-wrap .hero-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  margin: 1rem 0 0.6rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.myplan-wrap .hero-copy,
+.myplan-wrap p,
+.myplan-wrap label,
+.myplan-wrap td,
+.myplan-wrap th,
+.myplan-wrap div,
+.myplan-wrap span,
+.myplan-wrap a,
+.myplan-wrap button,
+.myplan-wrap input,
+.myplan-wrap select,
+.myplan-wrap textarea {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.myplan-wrap .hero-copy {
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 760px;
+  line-height: 1.75;
+  font-size: 1rem;
+}
+
+.myplan-wrap .metric {
+  padding: 1.15rem;
+  text-align: center;
+  height: 100%;
+}
+
+.myplan-wrap .metric strong {
+  display: block;
+  color: #f8c84b;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
+}
+
+.myplan-wrap .glass-panel {
+  padding: 1.4rem;
+  height: 100%;
+}
+
+.myplan-wrap .section-title {
+  font-size: 1.28rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+.myplan-wrap .table-lite {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.96rem;
+}
+
+.myplan-wrap .table-lite th,
+.myplan-wrap .table-lite td {
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.myplan-wrap .table-lite th {
+  color: rgba(255, 255, 255, 0.88);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.myplan-wrap .table-lite td {
+  color: #ffffff;
+}
+
+.myplan-wrap .stat-list {
+  display: grid;
+  gap: 12px;
+}
+
+.myplan-wrap .stat-item {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.98rem;
+  color: #ffffff;
+}
+
+.myplan-wrap .stat-item strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.myplan-wrap .form-control-glass,
+.myplan-wrap .form-select-glass,
+.myplan-wrap .form-textarea-glass {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  font-size: 0.97rem;
+  line-height: 1.45;
+}
+
+.myplan-wrap .form-control-glass:focus,
+.myplan-wrap .form-select-glass:focus,
+.myplan-wrap .form-textarea-glass:focus {
+  color: #ffffff;
+  border-color: rgba(248, 207, 90, 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(248, 207, 90, 0.14);
+  outline: none;
+}
+
+.myplan-wrap .form-control-glass::placeholder,
+.myplan-wrap .form-textarea-glass::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.myplan-wrap .form-select-glass option {
+  color: #111827;
+}
+
+.myplan-wrap .form-textarea-glass {
+  min-height: 110px;
+}
+
+.myplan-wrap .cta-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 15px 18px;
+  background: linear-gradient(135deg, #f8cf5a, #f59e0b);
+  color: #07111c;
+  font-weight: 800;
+  font-size: 0.96rem;
+  letter-spacing: 0.01em;
+  width: 100%;
+}
+
+.myplan-wrap .notice-item {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.myplan-wrap .notice-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .myplan-wrap {
+    padding: 1.5rem 0.85rem 2.4rem;
+  }
+
+  .myplan-wrap .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .myplan-wrap .table-lite {
+    min-width: 640px;
+    font-size: 0.92rem;
+  }
+}

@@ -1,0 +1,80 @@
+{% extends "adminnav.html" %}
+{% block title %}Packages{% endblock %}
+{% block navitems %}
+<div class="container" style="padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+        <h2 style="color: white;">Package Management</h2>
+        <a href="{% url "addpackage" %}" class="btn-admin-primary">+ Add Package</a>
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 1rem; overflow-x: auto;">
+        <table style="width: 100%; color: white; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="padding: 1rem; text-align: left;">ID</th>
+                    <th style="padding: 1rem; text-align: left;">Name</th>
+                    <th style="padding: 1rem; text-align: left;">Duration</th>
+                    <th style="padding: 1rem; text-align: left;">Price</th>
+                    <th style="padding: 1rem; text-align: left;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for package in pack %}
+                <tr>
+                    <td style="padding: 1rem;">{{ package.id }}</td>
+                    <td style="padding: 1rem;">{{ package.name }}</td>
+                    <td style="padding: 1rem;">{{ package.duration_months }} months</td>
+                    <td style="padding: 1rem; color: #ffd966;">Rs. {{ package.price }}</td>
+                   
+                    <td style="padding: 1rem;">
+                        <div class="action-btns">
+                            <a href="{% url "view_package" package.id %}" class="btn-action" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url "update_package" package.id %}" class="btn-action" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="btn-action btn-delete" onclick="confirmPackageDelete({{ package.id }}, '{{ package.name|escapejs }}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="deletePackageModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: rgba(0,0,0,0.92); border: 1px solid rgba(255,215,0,0.25); border-radius: 18px; padding: 2rem; max-width: 420px; width: calc(100% - 2rem); text-align: center;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: #f87171; margin-bottom: 1rem;"></i>
+        <h3 style="color: white; margin-bottom: 0.75rem;">Delete Package</h3>
+        <p style="color: rgba(255,255,255,0.75); margin-bottom: 1.5rem;">Are you sure you want to delete <strong id="deletePackageName"></strong>?</p>
+        <form id="deletePackageForm" method="post">
+            {% csrf_token %}
+            <button type="button" onclick="closePackageModal()" class="btn-admin-secondary">Cancel</button>
+            <button type="submit" class="btn-admin-danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function confirmPackageDelete(packageId, packageName) {
+        document.getElementById('deletePackageName').textContent = packageName;
+        document.getElementById('deletePackageForm').action = '/delete_package/' + packageId + '/';
+        document.getElementById('deletePackageModal').style.display = 'flex';
+    }
+
+    function closePackageModal() {
+        document.getElementById('deletePackageModal').style.display = 'none';
+    }
+
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('deletePackageModal');
+        if (event.target === modal) {
+            closePackageModal();
+        }
+    });
+</script>
+{% endblock %}

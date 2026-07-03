@@ -1,0 +1,58 @@
+{% extends "adminnav.html" %}
+{% block title %}Edit Product{% endblock %}
+{% block navitems %}
+<div class="container" style="max-width: 600px; margin: 2rem auto;">
+    <div style="background: rgba(255,255,255,0.08); border-radius: 20px; padding: 2rem;">
+        <h2 style="color: white; text-align: center; margin-bottom: 2rem;">Edit Product</h2>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Product Name</label>
+                <input type="text" name="name" value="{{ product.name }}" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white;" required>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Price</label>
+                <input type="number" name="price" value="{{ product.price }}" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white;" required>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Category</label>
+                <select name="category" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                    <option value="">-- Select --</option>
+                    {% for category in cat %}
+                    <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Stock</label>
+                <input type="number" name="stock" value="{{ product.stock }}" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Description</label>
+                <textarea name="desc" rows="4" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white;" required>{{ product.desc }}</textarea>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Current Image</label><br>
+                {% if product.image %}
+                <img src="{{ product.image.url }}" style="max-width: 100px; margin: 0.5rem 0;">
+                {% endif %}
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white;">Change Image</label>
+                <input type="file" name="image" accept="image/*" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+            </div>
+
+            <button type="submit" class="btn-admin-primary btn-admin-block">Update Product</button>
+            <a href="{% url 'adminproduct' %}" class="btn-admin-secondary btn-admin-block" style="margin-top: 1rem;">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,257 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/prodetail.css' %}">
+{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitMaster product detail</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Lightbox for product images -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+  
+</head>
+<body>
+  <div class="container">
+    {% if messages %}
+      {% for message in messages %}
+        <script>
+          alert("{{ message|escapejs }}");
+        </script>
+      {% endfor %}
+    {% endif %}
+
+    <!-- ===== BREADCRUMB ===== -->
+    <div class="breadcrumb-custom" data-aos="fade-down">
+      <a href="/store">Store</a> <i class="fas fa-chevron-right"></i>
+      <a href="#">{{ pro.category }}</a> <i class="fas fa-chevron-right"></i>
+      <span>{{ pro.name }}</span>
+    </div>
+
+    <!-- ===== MAIN PRODUCT SECTION ===== -->
+    <div class="row g-4">
+      <!-- Product Gallery Column -->
+      <div class="col-lg-6" data-aos="fade-right">
+        <div class="glass-card">
+          <div class="main-image-container">
+              {% if pro.image %}
+              <img src="{{ pro.image.url }}" alt="{{ pro.name }}" class="main-image" id="mainProductImage">
+              {% else %}
+              <img src="https://via.placeholder.com/700x500?text=FitMaster+Product" alt="{{ pro.name }}" class="main-image" id="mainProductImage">
+              {% endif %}
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Product Info Column -->
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="glass-card">
+          <div class="product-meta">
+{#            <span class="product-meta-item"><i class="fas fa-tag"></i> SKU: FM-DB-10K-RB</span>#}
+            <span class="product-meta-item"><i class="fas fa-cube"></i> {{ pro.category }}</span>
+{#            <span class="product-meta-item"><i class="fas fa-check-circle" style="color: #4CAF50;"></i> In Stock</span>#}
+          </div>
+
+          <h1 class="product-title-large">{{ pro.name }}</h1>
+          <div class="price-large">
+           Rs. {{ pro.price }}
+{#            <span class="discount-badge">33% OFF</span>#}
+          </div>
+          <div class="product-description">
+          {{ pro.desc }}
+          </div>
+
+{#          <!-- Product Highlights -->#}
+{#          <div class="highlights-grid">#}
+{#            <div class="highlight-item">#}
+{#              <i class="fas fa-weight-hanging"></i>#}
+{#              <div class="label">Weight</div>#}
+{#              <div class="value">10kg (Each)</div>#}
+{#            </div>#}
+{#            <div class="highlight-item">#}
+{#              <i class="fas fa-shield-alt"></i>#}
+{#              <div class="label">Material</div>#}
+{#              <div class="value">Rubber Coated</div>#}
+{#            </div>#}
+{#            <div class="highlight-item">#}
+{#              <i class="fas fa-hand-paper"></i>#}
+{#              <div class="label">Grip</div>#}
+{#              <div class="value">Chrome Handle</div>#}
+{#            </div>#}
+{#            <div class="highlight-item">#}
+{#              <i class="fas fa-truck"></i>#}
+{#              <div class="label">Warranty</div>#}
+{#              <div class="value">2 Years</div>#}
+{#            </div>#}
+{#          </div>#}
+{#          #}
+          <!-- Weight Options -->
+{#          <div class="option-section">#}
+{#            <div class="option-title">Select Weight (Pair)</div>#}
+{#            <div class="weight-options">#}
+{#              <div class="weight-option active" onclick="selectWeight(this, '5kg', '1,499')">#}
+{#                <div class="weight">5kg</div>#}
+{#                <div class="price">â‚¹1,499</div>#}
+{#              </div>#}
+{#              <div class="weight-option" onclick="selectWeight(this, '7.5kg', '1,799')">#}
+{#                <div class="weight">7.5kg</div>#}
+{#                <div class="price">â‚¹1,799</div>#}
+{#              </div>#}
+{#              <div class="weight-option" onclick="selectWeight(this, '10kg', '1,999')">#}
+{#                <div class="weight">10kg</div>#}
+{#                <div class="price">â‚¹1,999</div>#}
+{#              </div>#}
+{#              <div class="weight-option" onclick="selectWeight(this, '12.5kg', '2,499')">#}
+{#                <div class="weight">12.5kg</div>#}
+{#                <div class="price">â‚¹2,499</div>#}
+{#              </div>#}
+{#              <div class="weight-option" onclick="selectWeight(this, '15kg', '2,999')">#}
+{#                <div class="weight">15kg</div>#}
+{#                <div class="price">â‚¹2,999</div>#}
+{#              </div>#}
+{#            </div>#}
+{#          </div>#}
+{#          #}
+          <!-- Quantity Selector -->
+         <div class="option-section">
+    <div class="option-title">Quantity</div>
+    <form method="POST" action="{% url 'product_detail' pro.id %}" id="addToCartForm">
+        {% csrf_token %}
+        <div class="quantity-selector">
+            <button type="button" class="quantity-btn" onclick="decrementQuantity()">-</button>
+            <input type="text" name="qty" class="quantity-input" id="quantity" value="1" readonly>
+            <button type="button" class="quantity-btn" onclick="incrementQuantity()">+</button>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button type="submit" name="action" value="cart" class="btn-add-to-cart">
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+            <button type="submit" name="action" value="buy" class="btn-buy-now">
+                <i class="fas fa-bolt"></i> Buy Now
+            </button>
+        </div>
+    </form>
+</div>
+{#            <a href="#" class="btn-wishlist-large" onclick="toggleWishlist(event)" title="Add to Wishlist">#}
+{#              <i class="far fa-heart" id="wishlistIcon"></i>#}
+{#            </a>#}
+          </div>
+
+          <!-- Additional Info -->
+          <div style="display: flex; gap: 1.5rem; color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+            <span><i class="fas fa-truck me-2"></i>Free Delivery</span>
+            <span><i class="fas fa-undo-alt me-2"></i>7 Days Return</span>
+            <span><i class="fas fa-shield-alt me-2"></i>Secure Payment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TABS SECTION ===== -->
+      <!-- Shipping Tab -->
+
+    <!-- ===== RELATED PRODUCTS ===== -->
+    <div class="glass-section mt-5" data-aos="fade-up">
+      <h2 class="section-title" style="color: white; font-weight: 700; margin-bottom: 2rem;">
+        <i class="fas fa-tags me-2"></i>You May Also Like
+      </h2>
+
+      <div class="row g-4">
+        {% for item in related_products %}
+        <div class="col-md-6 col-lg-3">
+          <div class="related-product-card" onclick="window.location.href='{% url 'product_detail' item.id %}'">
+            <div class="related-product-image">
+              {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.name }}">
+              {% else %}
+              <img src="https://via.placeholder.com/500x350?text=FitMaster+Product" alt="{{ item.name }}">
+              {% endif %}
+            </div>
+            <div class="related-product-title">{{ item.name }}</div>
+            <div class="related-product-price">Rs. {{ item.price }}</div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="glass-card" style="text-align: center; color: rgba(255,255,255,0.78);">
+            More products will appear here as you add them to the catalog.
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
+  <script>
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+    
+    function incrementQuantity() {
+        let quantityInput = document.getElementById('quantity');
+        let currentValue = parseInt(quantityInput.value);
+        let maxStock = {{ pro.stock }};
+        
+        if (currentValue < maxStock) {
+            quantityInput.value = currentValue + 1;
+        } else {
+            alert('Maximum available stock is ' + maxStock);
+        }
+    }
+    
+    function decrementQuantity() {
+        let quantityInput = document.getElementById('quantity');
+        let currentValue = parseInt(quantityInput.value);
+        
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    }
+    
+    // Handle form submission
+    document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+        let quantity = parseInt(document.getElementById('quantity').value);
+        let maxStock = {{ pro.stock }};
+        
+        if (quantity > maxStock) {
+            e.preventDefault();
+            alert('Sorry, only ' + maxStock + ' items available in stock.');
+            return false;
+        }
+    });
+    
+    {% if not login %}
+        // Show login required modal or message
+        document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Please login to add items to cart');
+            window.location.href = "{% url 'login' %}";
+        });
+    {% endif %}
+</script>
+
+
+</body>
+</html>
+{% endblock content %}
+

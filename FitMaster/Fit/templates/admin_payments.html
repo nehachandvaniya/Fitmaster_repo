@@ -1,0 +1,47 @@
+﻿{% extends "adminnav.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/admin_payments.css' %}">
+<style>
+    .table-pay th {
+        color: #f3f4f6 !important;
+    }
+    .table-pay td,
+    .table-pay td * {
+        color: #ffffff !important;
+    }
+    .panel,
+    .panel *:not(.status-pill) {
+        color: #ffffff;
+    }
+</style>
+{% endblock %}
+{% block navitems %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h2 style="color:white;font-weight:700;margin:0;">Payments</h2>
+    <div style="color:rgba(255,255,255,.9);">Total payments: {{ payment_count }} | Total amount: Rs. {{ total_amount }}</div>
+</div>
+<div class="panel">
+    <div class="table-responsive">
+        <table class="table-pay">
+            <thead><tr><th>Customer</th><th>Package</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.customer.firstname }} {{ payment.customer.lastname }}</td>
+                    <td>{{ payment.membership.package.name }}</td>
+                    <td>Rs. {{ payment.amount }}</td>
+                    <td>{{ payment.payment_method }}</td>
+                    <td>{{ payment.status }}</td>
+                    <td>{{ payment.payment_date }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No payments found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

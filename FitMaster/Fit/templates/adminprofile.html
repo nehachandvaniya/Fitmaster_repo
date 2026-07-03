@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitMaster - Admin Profile</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+    <link rel="stylesheet" href="{% static 'css/templates/adminprofile.css' %}">
+</head>
+<body>
+  <div class="profile-card">
+    <!-- Profile Picture -->
+    <div class="profile-avatar">
+      <i class="fas fa-user-circle"></i>
+    </div>
+    
+    <!-- Admin Name -->
+    <h2 class="profile-name">John Anderson</h2>
+    
+    <!-- Admin Email -->
+    <div class="profile-email">
+      <i class="fas fa-envelope me-2"></i>john.anderson@fitmaster.com
+    </div>
+    
+    <!-- Role -->
+    <div class="profile-role">
+      <i class="fas fa-shield-alt me-1"></i> Administrator
+    </div>
+    
+    <!-- Additional Details -->
+    <div class="profile-details">
+      <div class="detail-item">
+        <span class="detail-label"><i class="fas fa-phone me-2"></i>Phone</span>
+        <span class="detail-value">+91 98765 43210</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label"><i class="fas fa-calendar-alt me-2"></i>Member Since</span>
+        <span class="detail-value">January 2024</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label"><i class="fas fa-clock me-2"></i>Last Login</span>
+        <span class="detail-value">Today, 10:30 AM</span>
+      </div>
+    </div>
+    
+    <!-- Edit Button -->
+    <a href="#" class="edit-btn">
+      <i class="fas fa-edit me-2"></i>Edit Profile
+    </a>
+  </div>
+</body>
+</html>

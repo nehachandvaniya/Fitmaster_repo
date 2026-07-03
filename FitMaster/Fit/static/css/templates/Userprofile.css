@@ -1,0 +1,75 @@
+.profile-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem 1rem 3rem; color: white; }
+  .glass-panel, .metric-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 26px;
+  }
+  .glass-panel { padding: 1.4rem; height: 100%; }
+  .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+  .metric-card { padding: 1.1rem; text-align: center; height: 100%; }
+  .metric-card strong { display: block; color: #f8c84b; font-size: 1.55rem; }
+  .profile-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .profile-avatar {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    border: 2px solid rgba(248,200,75,.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .profile-avatar i {
+    font-size: 2.7rem;
+    color: #f8c84b;
+  }
+  .profile-copy h2 { margin: 0 0 .3rem; font-size: 1.5rem; font-weight: 800; }
+  .profile-copy p { margin: 0; color: rgba(255,255,255,.7); }
+  .stat-item {
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    margin-bottom: .9rem;
+  }
+  .stat-item strong { display: block; margin-bottom: .25rem; }
+  .form-control-glass, .form-textarea-glass, .form-select-glass {
+    width: 100%;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+    color: white;
+    border-radius: 14px;
+    padding: .85rem 1rem;
+  }
+  .form-select-glass option { color: #111827; }
+  .form-textarea-glass { min-height: 110px; }
+  .cta-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 15px 18px;
+    background: linear-gradient(135deg,#f8cf5a,#f59e0b);
+    color: #07111c;
+    font-weight: 800;
+    width: 100%;
+  }
+  .notice {
+    padding: 14px 16px;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
+  .notice.success { background: rgba(74,222,128,.14); border: 1px solid rgba(74,222,128,.28); }
+  .notice.error { background: rgba(248,113,113,.14); border: 1px solid rgba(248,113,113,.28); }

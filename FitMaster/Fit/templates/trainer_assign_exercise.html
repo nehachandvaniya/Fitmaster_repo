@@ -1,0 +1,94 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}Exercise Plans{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/trainer_assign_exercise.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>Exercise Plan Management</h1>
+    <p>Create, update, and remove exercise plans for members assigned to you.</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="panel">
+      <h2 style="font-size:1.35rem;font-weight:700;margin-bottom:1rem;">Create Exercise Plan</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="mb-2">Customer</label>
+          <select name="customer_id" class="form-select-glass" required>
+            <option value="">Select customer</option>
+            {% for membership in memberships %}
+            <option value="{{ membership.customer.id }}">{{ membership.customer.firstname }} {{ membership.customer.lastname }} - {{ membership.package.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="mb-2">Exercise Name</label>
+          <input type="text" name="exercise_name" class="form-control-glass" required>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="mb-2">Sets</label>
+            <input type="number" name="sets" class="form-control-glass" required>
+          </div>
+          <div class="col-md-6">
+            <label class="mb-2">Reps</label>
+            <input type="number" name="reps" class="form-control-glass" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="mb-2">Instructions</label>
+          <textarea name="instructions" class="form-textarea-glass" required></textarea>
+        </div>
+        <button type="submit" class="btn-gold w-100"><i class="fas fa-plus"></i>Save Exercise Plan</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 style="font-size:1.35rem;font-weight:700;margin:0;">Existing Exercise Plans</h2>
+        <span style="color:rgba(255,255,255,.62);">{{ exercise_plans.count }} plan{{ exercise_plans.count|pluralize }}</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table-lite">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Exercise</th>
+              <th>Volume</th>
+              <th>Instructions</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for plan in exercise_plans %}
+            <tr>
+              <td>{{ plan.customer.firstname }} {{ plan.customer.lastname }}</td>
+              <td>{{ plan.exercise_name }}</td>
+              <td>{{ plan.sets }} sets x {{ plan.reps }} reps</td>
+              <td>{{ plan.instructions }}</td>
+              <td>
+                <div class="d-flex gap-2 flex-wrap">
+                  <a href="{% url 'edit_exercise_plan' plan.id %}" class="btn-soft"><i class="fas fa-pen"></i>Edit</a>
+                  <a href="{% url 'delete_exercise_plan' plan.id %}" class="btn-soft btn-soft-danger" onclick="return confirm('Delete this exercise plan?');"><i class="fas fa-trash"></i>Delete</a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No exercise plans created yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

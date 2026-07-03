@@ -1,0 +1,63 @@
+{% extends "nav.html" %}
+{% load static %}
+{% block title %}Search Results{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/store.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="category-header" data-aos="fade-down">
+        <div class="breadcrumb-custom mb-3">
+            <a href="{% url 'index' %}">Home</a> <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'store' %}">Store</a> <i class="fas fa-chevron-right"></i>
+            <span>Search Results</span>
+        </div>
+
+        <h1><i class="fas fa-search"></i> Search Results</h1>
+        <p class="mb-0 category-description">
+            {% if search_query %}
+            Showing matches for "<strong>{{ search_query }}</strong>"
+            {% else %}
+            Browse the products that match your search.
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="sort-bar" data-aos="fade-down">
+        <div class="results-count">
+            Found <strong>{{ results|length }}</strong> product{{ results|length|pluralize }}
+        </div>
+    </div>
+
+    <div class="row g-4 products-container" id="productsContainer">
+        {% for i in results %}
+        <div class="col-md-6 col-lg-4 col-xl-3 product-col" data-aos="fade-up">
+            <div class="glass-card product-card" data-product-id="{{ i.id }}">
+                <div class="product-image">
+                    <a href="{% url 'product_detail' i.id %}">
+                        {% if i.image %}
+                        <img src="{{ i.image.url }}" alt="{{ i.name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/400x300?text=FitMaster+Product" alt="{{ i.name }}">
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="product-category">{{ i.category.name }}</div>
+                <h3 class="product-title">{{ i.name }}</h3>
+                <div class="product-price">Rs. {{ i.price }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="glass-card" style="text-align:center; padding:2rem; color:white;">
+                <h3 style="margin-bottom:.75rem;">No matching products found</h3>
+                <p style="margin-bottom:1rem; color:rgba(255,255,255,0.75);">
+                    Try a different product name or browse the full store catalog.
+                </p>
+                <a href="{% url 'store' %}" class="btn btn-warning">Back to Store</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

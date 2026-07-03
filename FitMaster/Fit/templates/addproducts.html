@@ -1,0 +1,323 @@
+﻿{% extends "adminnav.html" %}
+{% load static %}
+{% block title %}Product Management{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/addproducts.css' %}">
+{% endblock %}
+{% block navitems %}
+
+
+<div class="container">
+    {% if messages %}
+        <div style="display: grid; gap: 0.75rem; margin-bottom: 1rem;">
+            {% for message in messages %}
+                <div style="padding: 0.9rem 1rem; border-radius: 14px; color: white; {% if message.tags == 'error' %}border: 1px solid rgba(248,113,113,0.35); background: rgba(248,113,113,0.15);{% else %}border: 1px solid rgba(74,222,128,0.35); background: rgba(74,222,128,0.12);{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2><i class="fas fa-cube"></i> Product Management</h2>
+        <a href="{% url 'add_product' %}" class="btn-add">
+            <i class="fas fa-plus-circle"></i> Add New Product
+        </a>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="stat-number">{{ product|length }}</div>
+            <div class="stat-label">Total Products</div>
+        </div>
+       
+        
+        <div class="stat-box">
+            <div class="stat-number">{{ cat|length }}</div>
+            <div class="stat-label">Categories</div>
+        </div>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, SKU, or category...">
+    </div>
+    
+    <!-- Product Table -->
+    <div class="product-table-container">
+        <table class="product-table" id="productTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                   
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in product %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>
+                        <div class="product-img">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                <i class="fas fa-image" style="font-size: 1.5rem; color: rgba(255,255,255,0.5);"></i>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <strong>{{ product.name }}</strong><br>
+                        {% comment %} <small style="color: rgba(255,255,255,0.5);">{{ product.brand|default:"No brand" }}</small> {% endcomment %}
+                    </td>
+                   
+                    <td>{{ product.category.name|default:"Uncategorized" }}</td>
+                    <td>
+                                <span style="color: #ffd966;">Rs. {{ product.price }}</span>
+                        {% if product.original_price %}
+                                <br><small style="text-decoration: line-through; color: rgba(255,255,255,0.4);">Rs. {{ product.original_price }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.stock > 50 %}
+                            <span class="badge-stock stock-high">{{ product.stock }} in stock</span>
+                        {% elif product.stock > 10 %}
+                            <span class="badge-stock stock-medium">{{ product.stock }} in stock</span>
+                        {% elif product.stock > 0 %}
+                            <span class="badge-stock stock-low">{{ product.stock }} in stock</span>
+                        {% else %}
+                            <span class="badge-stock stock-low">Out of stock</span>
+                        {% endif %}
+                    </td>
+                   
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url "edit_product" product.id %}" class="btn-action" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% comment %} <a href="#" class="btn-action" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a> {% endcomment %}
+                            <a href="{% url "del_product" product.id %}" class="btn-action btn-delete" onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-box-open" style="font-size: 3rem; color: rgba(255,255,255,0.3);"></i>
+                        <p style="margin-top: 1rem; color: rgba(255,255,255,0.6);">No products found. Click "Add New Product" to get started.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <div class="pagination-container" style="margin-top: 2rem; text-align: center;">
+        <nav>
+            <ul class="pagination" style="display: inline-flex; gap: 0.5rem; list-style: none; padding: 0;">
+                {% if products.has_previous %}
+                <li><a href="?page={{ products.previous_page_number }}" style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; color: white; text-decoration: none;">&laquo; Previous</a></li>
+                {% endif %}
+                
+                {% for num in products.paginator.page_range %}
+                    {% if products.number == num %}
+                    <li><span style="background: #ffd966; padding: 0.5rem 1rem; border-radius: 8px; color: #1a1a1a;">{{ num }}</span></li>
+                    {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                    <li><a href="?page={{ num }}" style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; color: white; text-decoration: none;">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if products.has_next %}
+                <li><a href="?page={{ products.next_page_number }}" style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; color: white; text-decoration: none;">Next &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+    <div class="page-header" style="margin-top: 2.5rem;">
+        <h2><i class="fas fa-tags"></i> Category Management</h2>
+        <a href="#" class="btn-add" onclick="openAddCategoryModal(); return false;">
+            <i class="fas fa-folder-plus"></i> Add Category
+        </a>
+    </div>
+
+    <div class="category-grid">
+        {% for category in category_rows %}
+            <div class="category-card">
+                <div class="category-thumb">
+                    {% if category.image %}
+                        <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    {% else %}
+                        <i class="fas fa-layer-group" style="color: rgba(255,255,255,0.5); font-size: 1.1rem;"></i>
+                    {% endif %}
+                </div>
+                <h4 style="color: white; margin-bottom: 0.35rem;">{{ category.name }}</h4>
+                <p style="color: rgba(255,255,255,0.65); margin-bottom: 1rem;">{{ category.product_count }} product{{ category.product_count|pluralize }}</p>
+                <div class="action-btns">
+                    <a href="#" class="btn-action" title="Edit" onclick="openEditCategoryModal('{{ category.id }}', '{{ category.name|escapejs }}'); return false;">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="#" class="btn-action btn-delete" title="Delete" onclick="confirmCategoryDelete('{{ category.id }}', '{{ category.name|escapejs }}'); return false;">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="category-card">
+                <p style="color: rgba(255,255,255,0.65); margin: 0;">No categories added yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 2rem; max-width: 400px; text-align: center;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f87171; margin-bottom: 1rem;"></i>
+        <h3 style="color: white; margin-bottom: 1rem;">Delete Product</h3>
+        <p style="color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;">Are you sure you want to delete <strong id="deleteProductName"></strong>? This action cannot be undone.</p>
+        <form id="deleteForm" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="button" onclick="closeModal()" class="btn-admin-secondary">Cancel</button>
+            <button type="submit" class="btn-admin-danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<div id="addCategoryModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: rgba(0,0,0,0.92); border: 1px solid rgba(255,215,0,0.25); border-radius: 20px; padding: 2rem; max-width: 480px; width: calc(100% - 2rem);">
+        <h3 style="color: white; margin-bottom: 1rem;">Add Category</h3>
+        <form action="{% url 'add_category' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label style="display:block; color:white; margin-bottom:0.4rem;">Category Name</label>
+            <input type="text" name="name" required style="width:100%; padding:0.85rem 1rem; border-radius:12px; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.08); color:white; margin-bottom:1rem;">
+            <label style="display:block; color:white; margin-bottom:0.4rem;">Category Image</label>
+            <input type="file" name="image" accept="image/*" style="width:100%; color:white; margin-bottom:1.5rem;">
+            <div class="btn-admin-row">
+                <button type="button" onclick="closeAddCategoryModal()" class="btn-admin-secondary">Cancel</button>
+                <button type="submit" class="btn-admin-primary">Save Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editCategoryModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: rgba(0,0,0,0.92); border: 1px solid rgba(255,215,0,0.25); border-radius: 20px; padding: 2rem; max-width: 480px; width: calc(100% - 2rem);">
+        <h3 style="color: white; margin-bottom: 1rem;">Edit Category</h3>
+        <form id="editCategoryForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label style="display:block; color:white; margin-bottom:0.4rem;">Category Name</label>
+            <input type="text" id="editCategoryName" name="name" required style="width:100%; padding:0.85rem 1rem; border-radius:12px; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.08); color:white; margin-bottom:1rem;">
+            <label style="display:block; color:white; margin-bottom:0.4rem;">Replace Image</label>
+            <input type="file" name="image" accept="image/*" style="width:100%; color:white; margin-bottom:1.5rem;">
+            <div class="btn-admin-row">
+                <button type="button" onclick="closeEditCategoryModal()" class="btn-admin-secondary">Cancel</button>
+                <button type="submit" class="btn-admin-primary">Update Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="deleteCategoryModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: rgba(0,0,0,0.92); border: 1px solid rgba(255,215,0,0.25); border-radius: 20px; padding: 2rem; max-width: 420px; width: calc(100% - 2rem); text-align: center;">
+        <h3 style="color: white; margin-bottom: 0.8rem;">Delete Category</h3>
+        <p style="color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;">Delete <strong id="deleteCategoryName"></strong>?</p>
+        <form id="deleteCategoryForm" method="post">
+            {% csrf_token %}
+            <button type="button" onclick="closeDeleteCategoryModal()" class="btn-admin-secondary">Cancel</button>
+            <button type="submit" class="btn-admin-danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let searchTerm = this.value.toLowerCase();
+        let table = document.getElementById('productTable');
+        let rows = table.getElementsByTagName('tr');
+        
+        for (let i = 1; i < rows.length; i++) {
+            let row = rows[i];
+            let text = row.textContent.toLowerCase();
+            if (text.indexOf(searchTerm) > -1) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+    
+    // Delete confirmation
+    function confirmDelete(productId, productName) {
+        document.getElementById('deleteProductName').textContent = productName;
+        document.getElementById('deleteForm').action = '/del_Product/' + productId;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+    
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        let modal = document.getElementById('deleteModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+        if (event.target == document.getElementById('addCategoryModal')) {
+            closeAddCategoryModal();
+        }
+        if (event.target == document.getElementById('editCategoryModal')) {
+            closeEditCategoryModal();
+        }
+        if (event.target == document.getElementById('deleteCategoryModal')) {
+            closeDeleteCategoryModal();
+        }
+    }
+
+    function openAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'flex';
+    }
+
+    function closeAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'none';
+    }
+
+    function openEditCategoryModal(categoryId, categoryName) {
+        document.getElementById('editCategoryName').value = categoryName;
+        document.getElementById('editCategoryForm').action = '/edit_category/' + categoryId + '/';
+        document.getElementById('editCategoryModal').style.display = 'flex';
+    }
+
+    function closeEditCategoryModal() {
+        document.getElementById('editCategoryModal').style.display = 'none';
+    }
+
+    function confirmCategoryDelete(categoryId, categoryName) {
+        document.getElementById('deleteCategoryName').textContent = categoryName;
+        document.getElementById('deleteCategoryForm').action = '/delete_category/' + categoryId + '/';
+        document.getElementById('deleteCategoryModal').style.display = 'flex';
+    }
+
+    function closeDeleteCategoryModal() {
+        document.getElementById('deleteCategoryModal').style.display = 'none';
+    }
+</script>
+{% endblock %}
+

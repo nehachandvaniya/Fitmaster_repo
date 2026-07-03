@@ -1,0 +1,169 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/trainerdash.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>Trainer Dashboard</h1>
+    <p>See your assigned members, latest plans, and performance snapshot in one place.</p>
+  </div>
+  <div style="color: rgba(255,255,255,.9);"><i class="fas fa-calendar-alt me-2"></i>{{ today|date:"d M Y" }}</div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="metric-card">
+      <div class="metric-icon"><i class="fas fa-users"></i></div>
+      <div class="metric-label">Assigned Customers</div>
+      <div class="metric-value">{{ customer_count }}</div>
+      <div class="metric-note">Members linked to your plans</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="metric-card">
+      <div class="metric-icon"><i class="fas fa-utensils"></i></div>
+      <div class="metric-label">Diet Plans</div>
+      <div class="metric-value">{{ diet_count }}</div>
+      <div class="metric-note">Created by you</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="metric-card">
+      <div class="metric-icon"><i class="fas fa-dumbbell"></i></div>
+      <div class="metric-label">Exercise Plans</div>
+      <div class="metric-value">{{ exercise_count }}</div>
+      <div class="metric-note">Created by you</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="metric-card">
+      <div class="metric-icon"><i class="fas fa-star"></i></div>
+      <div class="metric-label">Average Rating</div>
+      <div class="metric-value">{{ average_rating }}</div>
+      <div class="metric-note">From {{ rating_count }} feedback record{{ rating_count|pluralize }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="list-card">
+      <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+        <h3 style="margin:0;font-size:1.2rem;font-weight:700;">Assigned Customers</h3>
+        <a href="{% url 'trainer_customers' %}" class="btn-gold"><i class="fas fa-users"></i>View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table-lite">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Package</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for membership in memberships %}
+            <tr>
+              <td><strong>{{ membership.customer.firstname }} {{ membership.customer.lastname }}</strong><br><span style="color:rgba(255,255,255,.82);font-size:.85rem;">{{ membership.customer.email }}</span></td>
+              <td>{{ membership.package.name }}</td>
+              <td>{{ membership.start_date|date:"d M Y" }}</td>
+              <td>{{ membership.end_date|date:"d M Y" }}</td>
+              <td><span class="status-pill">{{ membership.status }}</span></td>
+              <td>
+                <div class="d-flex gap-2 flex-wrap">
+                  <a href="{% url 'trainer_assign_diet' %}" class="action-link"><i class="fas fa-utensils"></i>Diet</a>
+                  <a href="{% url 'trainer_assign_exercise' %}" class="action-link"><i class="fas fa-dumbbell"></i>Exercise</a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No customers are assigned to you yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="list-card h-100">
+      <h3 style="margin:0 0 1rem;font-size:1.2rem;font-weight:700;">Quick Actions</h3>
+      <div class="d-grid gap-3">
+        <a href="{% url 'trainer_assign_diet' %}" class="btn-gold"><i class="fas fa-utensils"></i>Manage Diet Plans</a>
+        <a href="{% url 'trainer_assign_exercise' %}" class="btn-gold"><i class="fas fa-dumbbell"></i>Manage Exercise Plans</a>
+        <a href="{% url 'trainer_progress' %}" class="btn-gold"><i class="fas fa-chart-line"></i>View Progress</a>
+        <a href="{% url 'trainer_profile' %}" class="btn-gold"><i class="fas fa-user-pen"></i>Update Profile</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="list-card mb-4">
+      <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+        <h3 style="margin:0;font-size:1.2rem;font-weight:700;">Admin Notifications</h3>
+        <span style="color: rgba(255,255,255,.86); font-size:.9rem;">{{ notices|length }} recent</span>
+      </div>
+      <div class="d-grid gap-3">
+        {% for notice in notices %}
+        <div class="plan-card">
+          <h4>{{ notice.title }}</h4>
+          <div style="color:rgba(255,255,255,.92); line-height:1.7;">{{ notice.message }}</div>
+          <div style="color:rgba(255,255,255,.72); font-size:.84rem; margin-top:.55rem;">{{ notice.created_at|date:"d M Y, h:i A" }}</div>
+        </div>
+        {% empty %}
+        <div class="plan-card"><h4>No notifications yet</h4><div style="color:rgba(255,255,255,.86);">Admin notifications for trainers will appear here.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="list-card">
+      <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+        <h3 style="margin:0;font-size:1.2rem;font-weight:700;">Recent Diet Plans</h3>
+        <a href="{% url 'trainer_assign_diet' %}" class="action-link">Open</a>
+      </div>
+      <div class="d-grid gap-3">
+        {% for plan in recent_diet_plans %}
+        <div class="plan-card">
+          <h4>{{ plan.customer.firstname }} {{ plan.customer.lastname }}</h4>
+          <div class="plan-line"><span>Description</span><span>{{ plan.diet_description }}</span></div>
+          <div class="plan-line"><span>Calories</span><span>{{ plan.calories }}</span></div>
+          <div class="plan-line"><span>Created</span><span>{{ plan.created_at|date:"d M Y" }}</span></div>
+        </div>
+        {% empty %}
+        <div class="plan-card"><h4>No diet plans yet</h4><div style="color:rgba(255,255,255,.86);">Create diet plans for your assigned members.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="list-card">
+      <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+        <h3 style="margin:0;font-size:1.2rem;font-weight:700;">Recent Exercise Plans</h3>
+        <a href="{% url 'trainer_assign_exercise' %}" class="action-link">Open</a>
+      </div>
+      <div class="d-grid gap-3">
+        {% for plan in recent_exercise_plans %}
+        <div class="plan-card">
+          <h4>{{ plan.customer.firstname }} {{ plan.customer.lastname }}</h4>
+          <div class="plan-line"><span>Exercise</span><span>{{ plan.exercise_name }}</span></div>
+          <div class="plan-line"><span>Volume</span><span>{{ plan.sets }} sets x {{ plan.reps }} reps</span></div>
+          <div class="plan-line"><span>Instructions</span><span>{{ plan.instructions }}</span></div>
+        </div>
+        {% empty %}
+        <div class="plan-card"><h4>No exercise plans yet</h4><div style="color:rgba(255,255,255,.86);">Create exercise plans for your assigned members.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

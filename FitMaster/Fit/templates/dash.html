@@ -1,0 +1,209 @@
+﻿{% extends "adminnav.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/dash.css' %}">
+<style>
+    .table-lite th {
+        color: #f3f4f6 !important;
+    }
+    .table-lite td,
+    .table-lite td *,
+    .mini-item h4,
+    .mini-item p,
+    .metric-label,
+    .metric-note {
+        color: #ffffff !important;
+    }
+    .section-card,
+    .section-card *:not(.status-pill):not(.status-pill *) {
+        color: #ffffff;
+    }
+    .metric-frost {
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 20px !important;
+    }
+    .section-frost {
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 20px !important;
+    }
+    .section-frost .mini-item,
+    .section-frost .snapshot-item {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+    }
+</style>
+{% endblock %}
+{% block navitems %}
+
+<div class="dash-shell">
+
+    <div class="row dashboard-row">
+        <div class="col-sm-6 col-xl-3">
+            <div class="glass-card metric-card metric-frost">
+                <div class="metric-icon"><i class="fas fa-users"></i></div>
+                <div class="metric-label">Customers</div>
+                <div class="metric-value">{{ customer_count }}</div>
+                <div class="metric-note">Registered customer accounts</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="glass-card metric-card metric-frost">
+                <div class="metric-icon"><i class="fas fa-user-tie"></i></div>
+                <div class="metric-label">Trainers</div>
+                <div class="metric-value">{{ trainer_count }}</div>
+                <div class="metric-note">Active trainer profiles</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="glass-card metric-card metric-frost">
+                <div class="metric-icon"><i class="fas fa-id-card"></i></div>
+                <div class="metric-label">Active Memberships</div>
+                <div class="metric-value">{{ active_memberships }}</div>
+                <div class="metric-note">Currently active package subscriptions</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="glass-card metric-card metric-frost">
+                <div class="metric-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+                <div class="metric-label">Revenue</div>
+                <div class="metric-value">Rs. {{ total_revenue }}</div>
+                <div class="metric-note">{{ payment_count }} verified payment{{ payment_count|pluralize }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row dashboard-row">
+        <div class="col-12">
+            <div class="glass-card section-card section-frost">
+                <div class="section-head">
+                    <h3 class="section-title">Recent Memberships</h3>
+                    <a href="{% url 'admincustomer' %}" class="link-chip">Manage customers</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table-lite">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Package</th>
+                                <th>Trainer</th>
+                                <th>Period</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for membership in recent_memberships %}
+                            <tr>
+                                <td>
+                                    <strong>{{ membership.customer_name }}</strong><br>
+                                    <span style="color: rgba(255,255,255,0.86); font-size: 0.85rem;">{{ membership.customer_email }}</span>
+                                </td>
+                                <td>{{ membership.package_name }}</td>
+                                <td>{{ membership.trainer_name }}</td>
+                                <td>{{ membership.start_date|date:"d M Y" }} to {{ membership.end_date|date:"d M Y" }}</td>
+                                <td>
+                                    <span class="status-pill {% if membership.status|lower == 'active' %}status-active{% else %}status-pending{% endif %}">
+                                        {{ membership.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5">No memberships created yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row dashboard-row">
+        <div class="col-lg-6">
+            <div class="glass-card section-card section-frost h-100">
+                <div class="section-head">
+                    <h3 class="section-title">Recent Payments</h3>
+                    <a href="{% url 'admin_payments' %}" class="link-chip">All payments</a>
+                </div>
+                <div class="mini-list">
+                    {% for payment in recent_payments %}
+                    <div class="mini-item">
+                        <h4>{{ payment.customer.firstname }} {{ payment.customer.lastname }} paid Rs. {{ payment.amount }}</h4>
+                        <p>{{ payment.membership.package.name }} | {{ payment.payment_method }} | {{ payment.payment_date|date:"d M Y, h:i A" }}</p>
+                        <div style="margin-top: 0.65rem;">
+                            <span class="status-pill {% if payment.status|lower == 'paid' %}status-paid{% else %}status-pending{% endif %}">{{ payment.status }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No payments recorded yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card section-card section-frost h-100">
+                <div class="section-head">
+                    <h3 class="section-title">Low Stock Products</h3>
+                    <a href="{% url 'adminproduct' %}" class="link-chip">Manage inventory</a>
+                </div>
+                <div class="mini-list">
+                    {% for item in low_stock_products %}
+                    <div class="mini-item">
+                        <h4>{{ item.name }}</h4>
+                        <p>{% if item.category %}{{ item.category.name }}{% else %}Uncategorized{% endif %} | {{ item.stock|default:0 }} item{{ item.stock|pluralize }} left</p>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No low stock alerts right now.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="glass-card section-card section-frost h-100">
+                <div class="section-head">
+                    <h3 class="section-title">Recent Orders</h3>
+                    <a href="{% url 'orderdisplay' %}" class="link-chip">All orders</a>
+                </div>
+                <div class="mini-list">
+                    {% for order in recent_orders %}
+                    <div class="mini-item">
+                        <h4>{{ order.first_name }} ordered {{ order.pro.name }}</h4>
+                        <p>Qty {{ order.qty }} | Rs. {{ order.total_price }} | {{ order.payment_mode }} | {{ order.datetime|date:"d M Y, h:i A" }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No store orders have been placed yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card section-card section-frost h-100">
+                <div class="section-head">
+                    <h3 class="section-title">Latest Notices</h3>
+                    <a href="{% url 'admin_notices' %}" class="link-chip">Manage notices</a>
+                </div>
+                <div class="mini-list">
+                    {% for notice in latest_notices %}
+                    <div class="mini-item">
+                        <h4>{{ notice.title }}</h4>
+                        <p>{{ notice.message }}</p>
+                        <div style="margin-top: 0.65rem; color: rgba(255,255,255,0.82); font-size: 0.82rem;">{{ notice.created_at|date:"d M Y, h:i A" }}</div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No notices published yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock navitems %}
+

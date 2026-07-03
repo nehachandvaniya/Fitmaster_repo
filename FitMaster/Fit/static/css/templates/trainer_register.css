@@ -1,0 +1,218 @@
+﻿* { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(255, 196, 0, 0.18), transparent 30%),
+        linear-gradient(135deg, rgba(10, 15, 24, 0.96), rgba(19, 28, 43, 0.92)),
+        url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1950&q=80') center/cover fixed;
+      color: white;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.75);
+      z-index: -1;
+    }
+    .register-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .glass-card {
+      width: 100%;
+      max-width: 1220px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 34px;
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    }
+    .hero-panel {
+      padding: 48px 40px;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(255, 196, 0, 0.1), rgba(255, 255, 255, 0.02));
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(255, 196, 0, 0.12);
+      color: #ffd45c;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.05;
+      margin: 28px 0 16px;
+    }
+    .hero-copy {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 1.02rem;
+      line-height: 1.7;
+      max-width: 460px;
+    }
+    .benefit-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .benefit-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .benefit-item i {
+      color: #ffd45c;
+      margin-top: 3px;
+    }
+    .benefit-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .form-panel {
+      padding: 40px 34px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .form-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    .form-panel::-webkit-scrollbar-thumb {
+      background: rgba(255, 212, 92, 0.35);
+      border-radius: 999px;
+    }
+    .form-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .form-subtitle {
+      color: rgba(255, 255, 255, 0.64);
+      margin-bottom: 26px;
+    }
+    .section-title {
+      color: #ffd45c;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      margin: 24px 0 14px;
+      font-weight: 700;
+    }
+    .form-label {
+      color: rgba(255, 255, 255, 0.82);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .form-control-glass,
+    .form-select-glass,
+    .form-textarea-glass {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.07);
+      color: white;
+      border-radius: 16px;
+      padding: 14px 16px;
+      outline: none;
+      transition: 0.25s ease;
+    }
+    .form-select-glass option {
+      color: #111827;
+    }
+    .form-textarea-glass {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .form-control-glass:focus,
+    .form-select-glass:focus,
+    .form-textarea-glass:focus {
+      border-color: rgba(255, 212, 92, 0.8);
+      box-shadow: 0 0 0 4px rgba(255, 212, 92, 0.12);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .form-control-glass::placeholder,
+    .form-textarea-glass::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .message-box {
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      border: 1px solid transparent;
+      font-size: 0.95rem;
+    }
+    .message-error {
+      background: rgba(248, 113, 113, 0.14);
+      border-color: rgba(248, 113, 113, 0.28);
+      color: #fca5a5;
+    }
+    .message-success {
+      background: rgba(74, 222, 128, 0.14);
+      border-color: rgba(74, 222, 128, 0.28);
+      color: #86efac;
+    }
+    .btn-submit {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-weight: 700;
+      color: #1f2937;
+      background: linear-gradient(135deg, #ffd45c, #fbbf24);
+      box-shadow: 0 18px 40px rgba(251, 191, 36, 0.26);
+      transition: 0.25s ease;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+    }
+    .auth-links {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .auth-links a {
+      color: #ffd45c;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    @media (max-width: 991px) {
+      .hero-panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .hero-title {
+        font-size: 2.4rem;
+      }
+      .form-panel {
+        max-height: none;
+      }
+    }
+    @media (max-width: 576px) {
+      .register-shell {
+        padding: 14px;
+      }
+      .hero-panel,
+      .form-panel {
+        padding: 28px 20px;
+      }
+      .hero-title {
+        font-size: 2rem;
+      }
+    }

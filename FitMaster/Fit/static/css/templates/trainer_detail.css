@@ -1,0 +1,45 @@
+﻿.trainer-detail-wrap { max-width: 1320px; margin: 0 auto; padding: 2rem 1rem 3rem; color: white; }
+  .hero-panel, .glass-panel, .metric-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 26px;
+  }
+  .hero-panel { padding: 1.8rem; margin-bottom: 1.6rem; }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(248,200,75,.12);
+    color: #f8c84b;
+    font-size: .82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .hero-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin: 1rem 0 .6rem; }
+  .hero-copy { color: rgba(255,255,255,.72); max-width: 760px; line-height: 1.7; }
+  .glass-panel { padding: 1.4rem; height: 100%; }
+  .section-title { font-size: 1.28rem; font-weight: 700; margin-bottom: 1rem; }
+  .metric-card { padding: 1.1rem; text-align: center; height: 100%; }
+  .metric-card strong { display: block; font-size: 1.6rem; color: #f8c84b; }
+  .profile-card { display: grid; gap: 1rem; }
+  .profile-line { padding: 14px 16px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+  .profile-line strong { display: block; margin-bottom: .3rem; }
+  .table-lite { width: 100%; min-width: 720px; border-collapse: collapse; }
+  .table-lite th, .table-lite td { padding: .9rem .75rem; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; vertical-align: top; color: #ffffff; }
+  .table-lite th { color: #ffffff; text-transform: uppercase; font-size: .8rem; letter-spacing: .08em; }
+  .feedback-card { padding: 1rem 1.05rem; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); margin-bottom: .9rem; }
+  .soft-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 13px 18px;
+    text-decoration: none;
+    font-weight: 700;
+    color: #07111c;
+    background: linear-gradient(135deg,#f8cf5a,#f59e0b);
+  }

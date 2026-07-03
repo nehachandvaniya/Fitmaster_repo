@@ -1,0 +1,85 @@
+{% extends "nav.html" %}
+{% load static %}
+{% block title %}Contact{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/contact.css' %}">
+{% endblock %}
+{% block content %}
+<div class="contact-wrap">
+  {% if messages %}
+  <div style="display:grid; gap:12px; margin-bottom:1.2rem;">
+    {% for message in messages %}
+    <div style="padding:14px 16px; border-radius:16px; color:white; {% if message.tags == 'error' %}background: rgba(248,113,113,.14); border:1px solid rgba(248,113,113,.28);{% else %}background: rgba(74,222,128,.14); border:1px solid rgba(74,222,128,.28);{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="contact-grid">
+    <div class="contact-panel">
+      <div class="contact-badge"><i class="fas fa-headset"></i> Contact FitMaster</div>
+      <h1 class="contact-title">Tell us what you need and we will help you quickly.</h1>
+      <p class="contact-copy">Use this page for membership questions, trainer support, product help, or general assistance. Your message is saved in the admin panel so the team can review it properly.</p>
+
+      <div class="contact-info-list">
+        <div class="contact-info-item">
+          <i class="fas fa-location-dot"></i>
+          <div>
+            <strong>Address</strong>
+            <span>Gujarat - 380001</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <i class="fas fa-phone"></i>
+          <div>
+            <strong>Phone</strong>
+            <span>+91 9145689766</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <strong>Email</strong>
+            <span>support@fitmaster.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form-card">
+      <h2>Send a Message</h2>
+      <form method="post" class="contact-form">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="field">
+            <label>Your Name</label>
+            <input type="text" name="name" value="{{ initial_name }}" required>
+          </div>
+          <div class="field">
+            <label>Email Address</label>
+            <input type="email" name="email" value="{{ initial_email }}" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Phone Number</label>
+            <input type="text" name="phone" value="{{ initial_phone }}">
+          </div>
+          <div class="field">
+            <label>Subject</label>
+            <input type="text" name="subject" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Message</label>
+          <textarea name="message" rows="6" required></textarea>
+        </div>
+        <button type="submit" class="contact-submit">
+          <i class="fas fa-paper-plane"></i> Send Message
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

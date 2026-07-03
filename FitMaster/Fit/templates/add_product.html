@@ -1,0 +1,58 @@
+{% extends "adminnav.html" %}
+{% block title %}Add Product{% endblock %}
+{% block navitems %}
+<div class="container" style="max-width: 720px; margin: 2rem auto;">
+    <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <div>
+                <h2 style="color:white; margin:0;">Add Product</h2>
+                <p style="color:rgba(255,255,255,0.65); margin:0.35rem 0 0;">Create a new store product and attach it to an existing category.</p>
+            </div>
+            <a href="{% url 'adminproduct' %}" style="color:#ffd966; text-decoration:none;">Back to products</a>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                    <label style="display:block; color:white; margin-bottom:0.45rem;">Product Name</label>
+                    <input type="text" name="name" required style="width:100%; padding:0.8rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); border-radius:12px; color:white;">
+                </div>
+                <div>
+                    <label style="display:block; color:white; margin-bottom:0.45rem;">Category</label>
+                    <select name="category" required style="width:100%; padding:0.8rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); border-radius:12px; color:white;">
+                        <option value="">Select category</option>
+                        {% for category in cat %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                    <label style="display:block; color:white; margin-bottom:0.45rem;">Price</label>
+                    <input type="number" name="price" min="0" required style="width:100%; padding:0.8rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); border-radius:12px; color:white;">
+                </div>
+                <div>
+                    <label style="display:block; color:white; margin-bottom:0.45rem;">Stock</label>
+                    <input type="number" name="stock" min="0" required style="width:100%; padding:0.8rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); border-radius:12px; color:white;">
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; color:white; margin-bottom:0.45rem;">Description</label>
+                <textarea name="description" rows="5" required style="width:100%; padding:0.8rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); border-radius:12px; color:white;"></textarea>
+            </div>
+
+            <div style="margin-bottom:1.5rem;">
+                <label style="display:block; color:white; margin-bottom:0.45rem;">Product Image</label>
+                <input type="file" name="image" accept="image/*" style="width:100%; color:white;">
+            </div>
+
+            <button type="submit" class="btn-admin-primary">Save Product</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

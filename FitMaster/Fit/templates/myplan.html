@@ -1,0 +1,185 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block title %}My Plan{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/myplan.css' %}">
+{% endblock %}
+{% block content %}
+
+
+<div class="myplan-wrap">
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="metric"><strong>{% if membership %}{{ membership.package.name }}{% else %}None{% endif %}</strong>Current Package</div></div>
+    <div class="col-md-3"><div class="metric"><strong>{% if membership and membership.trainer %}{{ membership.trainer.users.firstname }}{% else %}Self{% endif %}</strong>Trainer</div></div>
+    <div class="col-md-3"><div class="metric"><strong>{{ diet_plans.count }}</strong>Diet Plans</div></div>
+    <div class="col-md-3"><div class="metric"><strong>{{ exercise_plans.count }}</strong>Exercise Plans</div></div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12">
+      <div class="glass-panel h-100">
+        <div class="section-title">Membership Snapshot</div>
+        {% if membership %}
+        <div class="row g-3">
+          <div class="col-md-6"><div class="stat-item"><strong>Package</strong><div>{{ membership.package.name }}</div></div></div>
+          <div class="col-md-6"><div class="stat-item"><strong>Status</strong><div>{{ membership.status }}</div></div></div>
+          <div class="col-md-6"><div class="stat-item"><strong>Start Date</strong><div>{{ membership.start_date|date:"d M Y" }}</div></div></div>
+          <div class="col-md-6"><div class="stat-item"><strong>End Date</strong><div>{{ membership.end_date|date:"d M Y" }}</div></div></div>
+          <div class="col-md-6"><div class="stat-item"><strong>Trainer</strong><div>{% if membership.trainer %}{{ membership.trainer.users.firstname }} {{ membership.trainer.users.lastname }}{% else %}Not assigned{% endif %}</div></div></div>
+          <div class="col-md-6"><div class="stat-item"><strong>Package Price</strong><div>Rs. {{ membership.package.price }}</div></div></div>
+        </div>
+        {% else %}
+        <p style="margin:0; color: rgba(255,255,255,.72);">No membership active yet. Choose a package to unlock plans, invoices, and trainer guidance.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Diet Plans</div>
+        <div class="table-responsive">
+          <table class="table-lite">
+            <thead><tr><th>Trainer</th><th>Description</th><th>Calories</th><th>Date</th></tr></thead>
+            <tbody>
+              {% for plan in diet_plans %}
+              <tr>
+                <td>{{ plan.trainer.users.firstname }} {{ plan.trainer.users.lastname }}</td>
+                <td>{{ plan.diet_description }}</td>
+                <td>{{ plan.calories }}</td>
+                <td>{{ plan.created_at|date:"d M Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No diet plans assigned yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Exercise Plans</div>
+        <div class="table-responsive">
+          <table class="table-lite">
+            <thead><tr><th>Trainer</th><th>Exercise</th><th>Sets</th><th>Reps</th></tr></thead>
+            <tbody>
+              {% for plan in exercise_plans %}
+              <tr>
+                <td>{{ plan.trainer.users.firstname }} {{ plan.trainer.users.lastname }}</td>
+                <td>{{ plan.exercise_name }}</td>
+                <td>{{ plan.sets }}</td>
+                <td>{{ plan.reps }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No exercise plans assigned yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Progress History</div>
+        <div class="table-responsive">
+          <table class="table-lite">
+            <thead><tr><th>Date</th><th>Weight</th><th>Height</th><th>BMI</th></tr></thead>
+            <tbody>
+              {% for item in progresses %}
+              <tr>
+                <td>{{ item.record_date|date:"d M Y" }}</td>
+                <td>{{ item.weight }} kg</td>
+                <td>{{ item.height }} cm</td>
+                <td>{{ item.bmi }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No progress records yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Share Feedback</div>
+        {% if membership and membership.trainer %}
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="feedback">
+          <div class="mb-3">
+            <label class="mb-2">Rating</label>
+            <select name="rating" class="form-select-glass" required>
+              <option value="">Select rating</option>
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Good</option>
+              <option value="3">3 - Average</option>
+              <option value="2">2 - Poor</option>
+              <option value="1">1 - Very Poor</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="mb-2">Comments</label>
+            <textarea name="comments" class="form-textarea-glass" required></textarea>
+          </div>
+          <button type="submit" class="cta-btn">Submit Feedback</button>
+        </form>
+        {% else %}
+        <p style="margin:0; color: rgba(255,255,255,.72);">Feedback becomes available once a trainer is attached to your membership.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Payments & Invoices</div>
+        <div class="table-responsive">
+          <table class="table-lite">
+            <thead><tr><th>Package</th><th>Amount</th><th>Status</th><th>Invoice</th></tr></thead>
+            <tbody>
+              {% for payment in payments %}
+              <tr>
+                <td>{{ payment.membership.package.name }}</td>
+                <td>Rs. {{ payment.amount }}</td>
+                <td>{{ payment.status }}</td>
+                <td>
+                  {% for invoice in invoices %}
+                    {% if invoice.payment_id == payment.id %}
+                      {{ invoice.invoice_number }}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No payment records available.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Latest Notices</div>
+        {% for notice in notices %}
+        <div class="notice-item">
+          <div style="font-weight:700;">{{ notice.title }}</div>
+          <div style="color: rgba(255,255,255,.78); margin-top:.3rem;">{{ notice.message }}</div>
+          <div style="font-size:.8rem; color: rgba(255,255,255,.5); margin-top:.35rem;">{{ notice.created_at|date:"d M Y, h:i A" }}</div>
+        </div>
+        {% empty %}
+        <p style="margin:0; color: rgba(255,255,255,.72);">No notices available.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

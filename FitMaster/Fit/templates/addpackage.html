@@ -1,0 +1,41 @@
+{% extends "adminnav.html" %}
+{% block title %}Add Package{% endblock %}
+{% block navitems %}
+{% if added %}
+<script>
+alert({{added}})
+</script>
+{% endif %}
+<div class="container" style="max-width: 600px; margin: 2rem auto;">
+    <div style="background: rgba(255,255,255,0.08); border-radius: 20px; padding: 2rem;">
+        <h2 style="color: white; text-align: center; margin-bottom: 2rem;">Add New Package</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white; display: block; margin-bottom: 0.5rem;">Package Name</label>
+                <input type="text" name="name" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;" required>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white; display: block; margin-bottom: 0.5rem;">Duration (Months)</label>
+                <input type="number" name="duration_months" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;" required>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white; display: block; margin-bottom: 0.5rem;">Price (Rs.)</label>
+                <input type="number" name="price" step="0.01" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;" required>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="color: white; display: block; margin-bottom: 0.5rem;">Description</label>
+                <textarea name="description" rows="4" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-admin-primary btn-admin-block">Save Package</button>
+            <a href="{% url 'adminpackage' %}" class="btn-admin-secondary btn-admin-block" style="margin-top: 1rem;">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

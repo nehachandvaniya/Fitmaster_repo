@@ -1,0 +1,52 @@
+{% extends "nav.html" %}
+{% block title %}{{ category.name|default:"Products" }}{% endblock %}
+{% block content %}
+    <div class="container">
+
+        <div class="category-header" data-aos="fade-down">
+            <div class="breadcrumb-custom mb-3">
+                <a href="{% url 'store' %}">Store</a> <i class="fas fa-chevron-right"></i>
+                <span>{{ category.name|default:"Products" }}</span>
+            </div>
+
+            <h1><i class="fas fa-dumbbell"></i> {{ category.name|default:"Products" }}</h1>
+            <p class="mb-0 category-description">
+                Explore products from the {{ category.name|default:"selected" }} category.
+            </p>
+        </div>
+
+        <div class="sort-bar" data-aos="fade-down">
+            <div class="results-count">
+                Showing <strong>{{ pro|length }}</strong> of <strong>{{ pro|length }}</strong> products
+            </div>
+        </div>
+
+        <div class="row g-4 products-container" id="productsContainer">
+            {% for i in pro %}
+                <div class="col-md-6 col-lg-4 col-xl-3 product-col" data-aos="fade-up">
+                    <div class="glass-card product-card" data-product-id="{{ i.id }}">
+                        <div class="product-image">
+                            <a href="{% url 'product_detail' i.id %}">
+                                {% if i.image %}
+                                <img src="{{ i.image.url }}" alt="{{ i.name }}">
+                                {% else %}
+                                <img src="https://via.placeholder.com/400x300?text=FitMaster+Product" alt="{{ i.name }}">
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="product-category">{{ i.category.name }}</div>
+                        <h3 class="product-title">{{ i.name }}</h3>
+                        <div class="product-price">
+                            Rs. {{ i.price }}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <p style="color: white;">No products available in this category.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}

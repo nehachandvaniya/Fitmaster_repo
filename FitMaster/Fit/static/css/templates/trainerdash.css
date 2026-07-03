@@ -1,0 +1,114 @@
+.metric-card,
+.list-card,
+.plan-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.3rem;
+  height: 100%;
+  color: #ffffff;
+}
+
+.metric-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 217, 102, 0.14);
+  color: #ffd966;
+  font-size: 1.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.metric-label {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+}
+
+.metric-note {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.85rem;
+}
+
+.table-lite {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+}
+
+.table-lite th,
+.table-lite td {
+  padding: 0.95rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.table-lite td {
+  color: #ffffff;
+}
+
+.table-lite th {
+  color: rgba(255, 255, 255, 0.86);
+  text-transform: uppercase;
+  font-size: 0.77rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(74, 222, 128, 0.14);
+  border: 1px solid rgba(74, 222, 128, 0.26);
+  color: #86efac;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.plan-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.plan-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.plan-line span:first-child {
+  color: rgba(255, 255, 255, 0.86);
+  font-weight: 600;
+}
+
+.plan-line span:last-child {
+  color: #ffffff;
+}
+
+.plan-line:last-child {
+  border-bottom: 0;
+}
+
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  text-decoration: none;
+}

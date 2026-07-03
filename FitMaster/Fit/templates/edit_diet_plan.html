@@ -1,0 +1,40 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}Edit Diet Plan{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/edit_diet_plan.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>Edit Diet Plan</h1>
+    <p>Update an existing plan for one of your assigned customers.</p>
+  </div>
+  <a href="{% url 'trainer_assign_diet' %}" class="btn-gold"><i class="fas fa-arrow-left"></i>Back</a>
+</div>
+
+<div class="panel">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="mb-2">Customer</label>
+      <select name="customer_id" class="select-glass" required>
+        {% for membership in memberships %}
+        <option value="{{ membership.customer.id }}" {% if diet_plan.customer.id == membership.customer.id %}selected{% endif %}>{{ membership.customer.firstname }} {{ membership.customer.lastname }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="mb-2">Diet Description</label>
+      <textarea name="diet_description" class="textarea-glass" required>{{ diet_plan.diet_description }}</textarea>
+    </div>
+    <div class="mb-4">
+      <label class="mb-2">Calories</label>
+      <input type="number" name="calories" value="{{ diet_plan.calories }}" class="input-glass" required>
+    </div>
+    <button type="submit" class="btn-gold"><i class="fas fa-floppy-disk"></i>Update Diet Plan</button>
+  </form>
+</div>
+{% endblock %}
+
+

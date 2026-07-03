@@ -1,0 +1,145 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block title %}Store{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/store.css' %}">
+{% endblock %}
+{% block content %}
+
+
+
+<div class="container">
+  
+  <!-- ===== PAGE HEADER ===== -->
+  <div class="page-header" data-aos="fade-down">
+    <h1 class="page-title"><i class="fas fa-store me-3"></i>FitMaster Store</h1>
+    <p class="page-subtitle">Premium gym equipment, supplements, accessories and more</p>
+    
+    <!-- Search Bar -->
+     <form action="{% url "product_search" %}" method="get">
+    <div class="search-bar">
+      <input type="search" name="search_query" placeholder="Search products..." required>
+      <button type="submit"><i class="fas fa-search me-2"></i>Search</button>
+    </div>
+     </form>
+  </div>
+
+  <!-- ===== CATEGORY SECTION WITH IMAGES ===== -->
+  <div class="category-section" data-aos="fade-up">
+    <h2 class="category-title"><i class="fas fa-tags me-3"></i>Shop by Category</h2>
+
+    <div class="category-grid">
+      <!-- Dynamically display categories from database -->
+      {% for i in cat %}
+      <div class="category-item">
+        <div class="category-item-img">
+               <a href="{% url "product" i.id %}">
+            {% if i.image %}
+            <img src="{{ i.image.url }}" alt="{{ i.name }}">
+            {% else %}
+            <img src="https://via.placeholder.com/400x260?text=Category" alt="{{ i.name }}">
+            {% endif %}
+               </a>
+        </div>
+        <div class="category-item-name">{{ i.name }}</div>
+        <div class="category-item-count">{{ i.product_set.count }} products</div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center">
+        <p style="color: white;">No categories available.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ===== PRODUCTS SECTION ===== -->
+  <section class="glass-section" id="products" data-aos="fade-up">
+    <h2 class="section-title">Popular Products</h2>
+    <p class="section-subtitle">Gym essentials at best prices</p>
+
+    <div class="row g-4">
+      <!-- Dynamically display products from database -->
+      {% for product in products %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{% cycle '100' '200' '300' '100' '200' '300' %}">
+        <div class="glass-card product-card">
+          <div class="product-image">
+            {% if product.badge %}
+              <span class="product-badge">{{ product.badge }}</span>
+            {% endif %}
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+              <img src="https://via.placeholder.com/400x300?text=FitMaster+Product" alt="{{ product.name }}">
+            {% endif %}
+          </div>
+          <div class="product-category">{{ product.category.name|default:"General" }}</div>
+          <h3 class="product-title">{{ product.name }}</h3>
+         
+          <div class="product-price">
+                                            Rs. {{ product.price }}
+            {% if product.original_price %}
+                                                <span class="old-price">Rs. {{ product.original_price }}</span>
+            {% endif %}
+          </div>
+          <a href="{% url 'product_detail' product.id %}" class="btn-glass">View Details</a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center">
+        <p style="color: white;">No products available.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+
+<!-- Page-specific JavaScript -->
+<script>
+  // Category click active state
+  document.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', function() {
+      // Remove active class from all categories
+      document.querySelectorAll('.category-item').forEach(cat => {
+        cat.classList.remove('active');
+      });
+      // Add active class to clicked category
+      this.classList.add('active');
+
+      // Get category name or ID
+      const categoryName = this.querySelector('.category-item-name').innerText;
+      console.log('Selected category:', categoryName);
+
+      // Here you can add AJAX call to filter products by category
+      // You can send a request to filter products based on selected category
+      // window.location.href = `/store/?category=${categoryId}`;
+    });
+  });
+
+  // Search functionality
+  document.querySelector('.search-bar button').addEventListener('click', function() {
+    const searchTerm = document.querySelector('.search-bar input').value;
+    if (searchTerm.trim()) {
+      console.log('Searching for:', searchTerm);
+      // Here you can add AJAX call to search products
+      // window.location.href = `/store/?search=${searchTerm}`;
+    }
+  });
+
+  // Enter key search
+  document.querySelector('.search-bar input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      const searchTerm = this.value;
+      if (searchTerm.trim()) {
+        console.log('Searching for:', searchTerm);
+        // Here you can add AJAX call to search products
+        // window.location.href = `/store/?search=${searchTerm}`;
+      }
+    }
+  });
+</script>
+
+
+
+{% endblock %}
+

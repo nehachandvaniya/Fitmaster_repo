@@ -1,0 +1,209 @@
+﻿:root {
+      --gold: #f6c344;
+      --ink: #08111d;
+      --mist: rgba(255,255,255,0.72);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: white;
+      background:
+        radial-gradient(circle at top right, rgba(246, 195, 68, 0.2), transparent 28%),
+        linear-gradient(135deg, rgba(6, 12, 21, 0.96), rgba(8, 17, 29, 0.93)),
+        url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1950&q=80') center/cover fixed;
+    }
+    body::before {
+      content:"";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(8,17,29,0.3), rgba(8,17,29,0.7)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 84px);
+      pointer-events: none;
+    }
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      position: relative;
+      z-index: 1;
+    }
+    .register-card {
+      width: 100%;
+      max-width: 1240px;
+      background: rgba(8, 17, 29, 0.58);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 34px;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 30px 90px rgba(0,0,0,0.38);
+    }
+    .story-pane {
+      height: 100%;
+      padding: 42px;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      background:
+        linear-gradient(180deg, rgba(246, 195, 68, 0.14), rgba(255,255,255,0.03)),
+        linear-gradient(135deg, rgba(255,255,255,0.03), transparent 58%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .story-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--gold);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .story-pane h1 {
+      margin: 24px 0 14px;
+      font-size: clamp(2.4rem, 4vw, 4.1rem);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+    .story-pane p {
+      max-width: 470px;
+      color: var(--mist);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.7;
+    }
+    .highlight-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 32px;
+    }
+    .highlight-card {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      gap: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .highlight-card i { color: var(--gold); margin-top: 4px; }
+    .highlight-card strong { display:block; margin-bottom: 4px; }
+    .form-pane {
+      padding: 34px 32px;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .form-pane::-webkit-scrollbar { width: 8px; }
+    .form-pane::-webkit-scrollbar-thumb { background: rgba(246,195,68,0.35); border-radius: 999px; }
+    .form-pane h2 {
+      font-size: 2rem;
+      margin: 0 0 8px;
+      letter-spacing: -0.03em;
+    }
+    .subcopy {
+      color: var(--mist);
+      margin-bottom: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .notice {
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      border: 1px solid transparent;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .notice.error {
+      background: rgba(248, 113, 113, 0.12);
+      border-color: rgba(248, 113, 113, 0.28);
+      color: #fecaca;
+    }
+    .section-title {
+      margin: 22px 0 14px;
+      color: var(--gold);
+      font-size: 0.83rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 800;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,0.86);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      font-size: 0.93rem;
+    }
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: 0.22s ease;
+    }
+    .field select option { color: #111827; }
+    .field input::placeholder { color: rgba(255,255,255,0.35); }
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: rgba(246,195,68,0.7);
+      box-shadow: 0 0 0 4px rgba(246,195,68,0.12);
+      background: rgba(255,255,255,0.08);
+    }
+    .hint {
+      margin-top: 6px;
+      color: rgba(255,255,255,0.48);
+      font-size: 0.8rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .trainer-fields {
+      padding: 16px;
+      margin-top: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 16px 20px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #f8cf5a, #f59e0b);
+      color: var(--ink);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 800;
+    }
+    .bottom-link {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--mist);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .bottom-link a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    @media (max-width: 991px) {
+      .story-pane {
+        border-right: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+        padding: 28px 22px;
+      }
+      .form-pane {
+        max-height: none;
+        padding: 28px 22px;
+      }
+    }

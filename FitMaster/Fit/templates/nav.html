@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitMaster - {% block title %}{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/templates/nav.css' %}">
+    <style>
+        .glass-footer {
+            background: rgba(7, 17, 28, 0.72) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #ffffff !important;
+        }
+
+        .glass-footer h5,
+        .glass-footer p,
+        .glass-footer .footer-links li,
+        .glass-footer .footer-links a,
+        .glass-footer .footer-bottom,
+        .glass-footer .footer-bottom p {
+            color: rgba(255, 255, 255, 0.86) !important;
+        }
+
+        .glass-footer h5 {
+            border-left-color: rgba(255, 255, 255, 0.14) !important;
+        }
+
+        .glass-footer .footer-links i,
+        .glass-footer .newsletter-form button,
+        .glass-footer .social-links a {
+            color: #f8c84b !important;
+        }
+
+        .glass-footer .social-links a {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+
+        .glass-footer .newsletter-form {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+
+        .glass-footer .newsletter-form input,
+        .glass-footer .newsletter-form input::placeholder {
+            color: rgba(255, 255, 255, 0.82) !important;
+        }
+
+        .glass-footer .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<!-- Navbar - Fixed and Compact -->
+<nav class="navbar navbar-expand-lg fixed-top glass-navbar site-navbar">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand site-brand" href="{% url 'index' %}">
+            <span class="site-brand-mark">
+                <span class="site-brand-initials">FM</span>
+            </span>
+            <span class="site-brand-copy">
+                <span class="site-brand-title">FitMaster</span>
+                <span class="site-brand-sub">Train With Structure</span>
+            </span>
+        </a>
+
+        <!-- Toggler (hamburger) - Hidden on desktop, shown on mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links - Collapsible on mobile -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto site-nav-links">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}"><i class="fas fa-house"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/store/' %}active{% endif %}" href="{% url 'store' %}"><i class="fas fa-store"></i>Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/trainer-detail/' %}active{% endif %}" href="{% url 'trainer_detail' %}"><i class="fas fa-user-group"></i>Trainer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="{% url 'contact_page' %}">
+                        <i class="fas fa-envelope"></i>Contact
+                    </a>
+                </li>
+            </ul>
+            <div class="site-nav-actions">
+                {% if request.session.login %}
+                    <div class="site-account-dropdown" id="accountDropdown">
+                        <button class="site-pill site-dropdown-toggle site-pill-outline" type="button" id="accountDropdownToggle" aria-expanded="false" aria-controls="accountDropdownMenu">
+                            <i class="fas fa-user"></i>Account
+                        </button>
+                        <div class="site-dropdown-menu" id="accountDropdownMenu">
+                            <a class="site-dropdown-item" href="{% url 'userprofile' %}">
+                                <i class="fas fa-user-circle"></i>Profile
+                            </a>
+                            <a class="site-dropdown-item" href="{% url 'usermember' %}">
+                                <i class="fas fa-crown"></i>Membership
+                            </a>
+                            <a class="site-dropdown-item" href="{% url 'myplan' %}">
+                                <i class="fas fa-chart-line"></i>My Plans
+                            </a>
+                            <a class="site-dropdown-item" href="{% url 'user_orders' %}">
+                                <i class="fas fa-bag-shopping"></i>Orders
+                            </a>
+                            <a class="site-dropdown-item" href="{% url 'bmi_calculator' %}">
+                                <i class="fas fa-calculator"></i>BMI Tracker
+                            </a>
+                            <a class="site-dropdown-item" href="{% url 'cart_view' %}">
+                                <i class="fas fa-cart-shopping"></i>Cart
+                            </a>
+                            <div class="site-dropdown-divider"></div>
+                            <a class="site-dropdown-item" href="{% url 'logout' %}">
+                                <i class="fas fa-right-from-bracket"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="site-pill site-pill-outline" href="{% url 'login' %}">
+                        <i class="fas fa-right-to-bracket"></i>Login
+                    </a>
+                    <a class="site-pill site-pill-primary" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus"></i>Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Main Content -->
+<main class="w-100">
+    {% block content %}{% endblock %}
+</main>
+<!-- Footer -->
+<footer class="glass-footer" id="contact">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <h5><i class="fas fa-dumbbell me-2"></i>FitMaster AI</h5>
+                <p class="mt-3">Your complete fitness solution, expert trainers, and quality 
+                    products.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5>Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="{% url 'usermember' %}"><i class="fas fa-box"></i> Packages</a></li>
+                    <li><a href="{% url 'store' %}"><i class="fas fa-store"></i> Store</a></li>
+                    <li><a href="{% url 'userprofile' %}"><i class="fas fa-user"></i> My Profile</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5>Categories</h5>
+                <ul class="footer-links">
+                    {% for category in footer_categories %}
+                    <li><a href="{% url 'product' category.id %}"><i class="fas fa-tag"></i> {{ category.name }}</a></li>
+                    {% empty %}
+                    <li><a href="{% url 'store' %}"><i class="fas fa-store"></i> Browse Products</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5>Contact Us</h5>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt"></i> Gujarat - 380001</li>
+                    <li><i class="fas fa-phone"></i> +91 9145689766</li>
+                    <li><i class="fas fa-envelope"></i> support@fitmaster.com</li>
+                </ul>
+
+                <h5 class="mt-4">Newsletter</h5>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'newsletter' in message|lower or 'subscribed' in message|lower or 'email address' in message|lower %}
+                        <div style="padding:10px 12px; border-radius:14px; margin-bottom:12px; color:white; {% if message.tags == 'error' %}background:rgba(248,113,113,.14); border:1px solid rgba(248,113,113,.28);{% else %}background:rgba(74,222,128,.14); border:1px solid rgba(74,222,128,.28);{% endif %}">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <form method="post" action="{% url 'subscribe_newsletter' %}" class="newsletter-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input type="email" name="newsletter_email" placeholder="Your email" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FitMaster AI. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+
+    // Ensure navbar height remains consistent
+    document.addEventListener('DOMContentLoaded', function () {
+        const navbar = document.querySelector('.glass-navbar');
+        if (navbar) {
+            // Force navbar height
+            navbar.style.minHeight = '76px';
+            navbar.style.maxHeight = 'none';
+
+            // Set body padding
+            document.body.style.paddingTop = '88px';
+        }
+
+        const dropdownToggle = document.getElementById('accountDropdownToggle');
+        const dropdownMenu = document.getElementById('accountDropdownMenu');
+        const dropdownWrap = document.getElementById('accountDropdown');
+
+        if (dropdownToggle && dropdownMenu && dropdownWrap) {
+            dropdownToggle.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                const willOpen = !dropdownMenu.classList.contains('is-open');
+                dropdownMenu.classList.toggle('is-open', willOpen);
+                dropdownToggle.classList.toggle('is-open', willOpen);
+                dropdownToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!dropdownWrap.contains(event.target)) {
+                    dropdownMenu.classList.remove('is-open');
+                    dropdownToggle.classList.remove('is-open');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

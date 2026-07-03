@@ -1,0 +1,180 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/cart.css' %}">
+{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>FitMaster - Shopping Cart</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
+  {% if outofstock %}
+  <script>
+    alert("{{outofstock}}");
+  </script>
+  {% endif %}
+</head>
+<body>
+  <div class="cart-container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-custom" data-aos="fade-down">
+      <a href="{% url 'store' %}"><i class="fas fa-store me-1"></i>Store</a>
+      <i class="fas fa-chevron-right"></i>
+      <span>Shopping Cart</span>
+    </div>
+
+    {% if data %}
+    <!-- Action Bar -->
+    <div class="action-bar" data-aos="fade-down">
+      <div class="cart-count">
+        <i class="fas fa-shopping-cart me-1"></i>
+        <span id="cartCount">{{ cart_data|length }}</span> items in cart
+      </div>
+      <a href="{% url 'removeall' %}" class="btn-remove-all" onclick="return confirm('Are you sure you want to remove all items?')">
+        <i class="fas fa-trash-alt me-1"></i> Remove All
+      </a>
+    </div>
+
+    <div class="row g-4">
+      <!-- Cart Items -->
+      <div class="col-lg-8" data-aos="fade-right">
+        <div class="glass-card">
+          <h3 class="section-title">
+            <i class="fas fa-shopping-cart me-2"></i>Shopping Cart
+          </h3>
+
+          <div class="table-responsive">
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in cart_data %}
+                <tr data-product-id="{{ i.id }}" data-price="{{ i.pro.price }}">
+                  <td data-label="Product">
+                    <div class="cart-product">
+                      <div class="cart-product-img">
+                        {% if i.pro.image %}
+                        <img src="{{ i.pro.image.url }}" alt="{{ i.pro.name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/160x160?text=FitMaster+Product" alt="{{ i.pro.name }}">
+                        {% endif %}
+                      </div>
+                      <div class="cart-product-info">
+                        <h4>{{ i.pro.name }}</h4>
+                        <p>{{ i.pro.category.name }}</p>
+                      </div>
+                    </div>
+                  </td>
+                            <td data-label="Price" class="product-price">Rs. {{ i.pro.price }}</td>
+                  <td data-label="Quantity">
+                    <div class="quantity-selector">
+                                    <a href="{% url 'minus_pro' i.id %}" class="quantity-btn">-</a>
+                      <input type="text" class="quantity-input" value="{{ i.qty }}" readonly>
+                      <a href="{% url 'plus_pro' i.id %}" class="quantity-btn">+</a>
+                    </div>
+                  </td>
+                            <td data-label="Total" class="product-price">Rs. {{ i.total_price }}</td>
+                  <td data-label="Remove">
+                    <a href="{% url 'remove' i.id %}" class="btn-remove">
+                      <i class="fas fa-trash-alt"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-lg-4" data-aos="fade-left">
+        <div class="glass-card">
+          <h3 class="section-title">
+            <i class="fas fa-receipt me-2"></i>Order Summary
+          </h3>
+
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Subtotal</span>
+                    <span>Rs. {{ total }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+            <div class="summary-row grand-total">
+              <span>Total Amount</span>
+                    <span>Rs. {{ total }}</span>
+            </div>
+          </div>
+
+          <a href="{% url 'checkout' %}" class="btn-checkout">
+            <i class="fas fa-lock me-2"></i> Proceed to Checkout
+          </a>
+
+          <div class="mt-4 text-center">
+            <a href="{% url 'store' %}" class="btn-continue">
+              <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+            </a>
+          </div>
+
+          <!-- Payment Options -->
+          <div class="mt-3 text-center" style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">
+            <i class="fas fa-credit-card me-2"></i>
+            <i class="fab fa-google-pay me-2"></i>
+            <i class="fab fa-amazon-pay me-2"></i>
+            <i class="fas fa-money-bill-wave"></i>
+            <div class="mt-2">
+              <i class="fas fa-shield-alt me-1"></i> Secure Payment
+              <i class="fas fa-lock ms-2 me-1"></i> 100% Secure
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% else %}
+    <!-- Empty Cart -->
+    <div class="glass-card" data-aos="fade-up">
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <h3>Your Cart is Empty!</h3>
+        <p>Looks like you haven't added any items to your cart yet.</p>
+        <a href="{% url 'store' %}" class="btn-continue">
+          <i class="fas fa-store me-2"></i>Start Shopping
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+  </script>
+</body>
+</html>
+{% endblock content %}
+

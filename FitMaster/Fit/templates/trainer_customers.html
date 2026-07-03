@@ -1,0 +1,61 @@
+﻿{% extends "trainernav.html" %}
+{% load static %}
+{% block title %}My Customers{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/trainer_customers.css' %}">
+{% endblock %}
+{% block trainer_content %}
+<div class="page-head">
+  <div>
+    <h1>My Customers</h1>
+    <p>Review your assigned members, their active packages, and where they are in their membership period.</p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{% url 'trainer_progress' %}" class="btn-gold"><i class="fas fa-chart-line"></i>Customer Progress</a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4"><div class="metric"><strong>{{ customer_count }}</strong>Assigned Customers</div></div>
+  <div class="col-md-4"><div class="metric"><strong>{{ trainer_data.experience_year }}</strong>Years Experience</div></div>
+  <div class="col-md-4"><div class="metric"><strong>{{ trainer_data.category|title }}</strong>Trainer Category</div></div>
+</div>
+
+<div class="panel">
+  <div class="table-responsive">
+    <table class="table-lite">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Contact</th>
+          <th>Package</th>
+          <th>Membership Period</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for membership in memberships %}
+        <tr>
+          <td><strong>{{ membership.customer.firstname }} {{ membership.customer.lastname }}</strong></td>
+          <td>{{ membership.customer.email }}<br>{{ membership.customer.mobile }}</td>
+          <td>{{ membership.package.name }}</td>
+          <td>{{ membership.start_date|date:"d M Y" }} to {{ membership.end_date|date:"d M Y" }}</td>
+          <td><span class="status-pill">{{ membership.status }}</span></td>
+          <td>
+            <div class="d-flex gap-2 flex-wrap">
+              <a href="{% url 'trainer_assign_diet' %}" class="btn btn-sm btn-outline-light">Diet Plans</a>
+              <a href="{% url 'trainer_assign_exercise' %}" class="btn btn-sm btn-outline-light">Exercise Plans</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No customers are assigned to you yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+

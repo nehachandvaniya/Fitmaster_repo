@@ -1,0 +1,5 @@
+﻿.panel{background:rgba(255,255,255,.06);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:1.5rem;color:white}
+    .form-control-glass,.form-textarea-glass{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:white;border-radius:14px;padding:.85rem 1rem}
+    .form-textarea-glass{min-height:120px}
+    .notice-item{padding:1rem 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .btn-gold{background:linear-gradient(135deg,#ffd966,#fbbf24);color:#1a1a1a;border:none;border-radius:999px;padding:.85rem 1.2rem;font-weight:700}

@@ -1,0 +1,219 @@
+{% extends "nav.html" %}
+{% load static %}
+{% block title %}Checkout{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/checkout.css' %}">
+{% endblock %}
+{% block content %}
+<div class="checkout-container">
+    {% if messages %}
+    <div style="display:grid; gap:12px; margin-bottom:1rem;">
+        {% for message in messages %}
+        <div style="padding:14px 16px; border-radius:16px; color:white; {% if message.tags == 'error' %}background:rgba(248,113,113,.14); border:1px solid rgba(248,113,113,.28);{% else %}background:rgba(74,222,128,.14); border:1px solid rgba(74,222,128,.28);{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="checkout-header" data-aos="fade-down">
+        <div>
+            <div class="breadcrumb-custom">
+                <a href="{% url 'store' %}"><i class="fas fa-store me-1"></i>Store</a>
+                <i class="fas fa-chevron-right"></i>
+                {% if checkout_source == 'buy_now' %}
+                <span>Buy Now Checkout</span>
+                {% else %}
+                <a href="{% url 'cart_view' %}">Cart</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Checkout</span>
+                {% endif %}
+            </div>
+            <h1 class="checkout-title">Complete Your Order</h1>
+            <p class="checkout-copy">Review your contact details, confirm your address, and choose the payment method that works best for you.</p>
+        </div>
+        <div class="checkout-pill">
+            <i class="fas fa-shield-alt"></i> Secure Checkout
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8" data-aos="fade-right">
+            <form method="post" id="checkoutForm">
+                {% csrf_token %}
+
+                <div class="glass-card mb-4">
+                    <h3 class="section-title"><span>1</span> Contact Information</h3>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control-glass" name="first_name" value="{{ loggin.firstname }} {{ loggin.lastname }}" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control-glass" name="email" value="{{ loggin.email }}" placeholder="Enter email address" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control-glass" name="mobile" value="{{ loggin.mobile }}" placeholder="Enter phone number" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card mb-4">
+                    <h3 class="section-title"><span>2</span> Shipping Address</h3>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control-glass" name="address" value="{{ loggin.address }}" placeholder="House/Flat No., Street" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control-glass" name="city" value="{{ loggin.city }}" placeholder="City" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">State</label>
+                            <input type="text" class="form-control-glass" name="state" value="{{ loggin.state }}" placeholder="State" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">PIN Code</label>
+                            <input type="text" class="form-control-glass" name="pincode" value="{{ loggin.pincode }}" placeholder="PIN Code" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card mb-4">
+                    <h3 class="section-title"><span>3</span> Payment Method</h3>
+                    <div class="payment-options">
+                        <div class="payment-option active" onclick="selectPayment(this)">
+                            <input type="radio" name="payment" value="COD" id="cod" checked>
+                            <label for="cod">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Cash on Delivery</span>
+                                <small>Confirm now and pay when the order arrives</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-place-order" id="checkoutSubmitBtn">
+                    <i class="fas fa-lock me-2"></i> Complete Order - Rs. {{ total }}
+                </button>
+            </form>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-left">
+            <div class="glass-card sticky-summary">
+                <h3 class="section-title"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h3>
+
+                <div class="order-items-list">
+                    {% for i in cart_data %}
+                    <div class="order-item">
+                        <div class="order-item-img">
+                            {% if i.pro.image %}
+                            <img src="{{ i.pro.image.url }}" alt="{{ i.pro.name }}">
+                            {% else %}
+                            <i class="fas fa-image"></i>
+                            {% endif %}
+                        </div>
+                        <div class="order-item-details">
+                            <div class="order-item-name">{{ i.pro.name }}</div>
+                            <div class="order-item-category">{{ i.pro.desc|truncatechars:44 }}</div>
+                            <div class="order-item-meta">
+                                <span>Qty: {{ i.qty }}</span>
+                                <strong>Rs. {{ i.total_price }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>Rs. {{ total }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-row grand-total">
+                        <span>Total Amount</span>
+                        <span>Rs. {{ total }}</span>
+                    </div>
+                </div>
+
+                <div class="shipping-info">
+                    <p><i class="fas fa-truck"></i> Free shipping on this order</p>
+                    <p><i class="fas fa-clock"></i> Estimated delivery: 3-5 business days</p>
+                    <p><i class="fas fa-money-bill-wave"></i> Pay when the order arrives</p>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{% if checkout_source == 'buy_now' %}{% url 'store' %}{% else %}{% url 'cart_view' %}{% endif %}" class="btn-back">
+                        <i class="fas fa-arrow-left me-2"></i>{% if checkout_source == 'buy_now' %}Back to Store{% else %}Back to Cart{% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const checkoutForm = document.getElementById('checkoutForm');
+
+    function selectPayment(element) {
+        const radio = element.querySelector('input');
+        if (!radio || radio.disabled) {
+            return;
+        }
+
+        document.querySelectorAll('.payment-option').forEach(el => {
+            el.classList.remove('active');
+        });
+        element.classList.add('active');
+        radio.checked = true;
+    }
+
+    function validateForm() {
+        const fullName = document.querySelector('input[name="first_name"]').value.trim();
+        const phone = document.querySelector('input[name="mobile"]').value.trim();
+        const address = document.querySelector('input[name="address"]').value.trim();
+        const city = document.querySelector('input[name="city"]').value.trim();
+        const state = document.querySelector('input[name="state"]').value.trim();
+        const pincode = document.querySelector('input[name="pincode"]').value.trim();
+
+        if (!fullName) {
+            alert('Please enter your full name');
+            return false;
+        }
+        if (!phone) {
+            alert('Please enter your phone number');
+            return false;
+        }
+        if (!address) {
+            alert('Please enter your address');
+            return false;
+        }
+        if (!city) {
+            alert('Please enter your city');
+            return false;
+        }
+        if (!state) {
+            alert('Please enter your state');
+            return false;
+        }
+        if (!/^\d{6}$/.test(pincode)) {
+            alert('Please enter a valid 6-digit pincode');
+            return false;
+        }
+        return true;
+    }
+
+    checkoutForm.addEventListener('submit', function (event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

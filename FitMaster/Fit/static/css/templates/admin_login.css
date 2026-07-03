@@ -1,0 +1,144 @@
+﻿:root { --gold: #f6c344; --ink: #07111c; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: white;
+      font-family: Georgia, 'Times New Roman', serif;
+      background:
+        radial-gradient(circle at top center, rgba(246, 195, 68, 0.18), transparent 24%),
+        linear-gradient(135deg, rgba(7, 17, 28, 0.97), rgba(10, 20, 34, 0.94)),
+        url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1950&q=80') center/cover fixed;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(7,17,28,.42), rgba(7,17,28,.74));
+      pointer-events: none;
+    }
+    .shell {
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+      z-index: 1;
+      background: rgba(8, 17, 29, 0.58);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 30px;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.42);
+    }
+    .left {
+      padding: 38px;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(246, 195, 68, 0.14), rgba(255,255,255,0.03));
+      height: 100%;
+    }
+    .right {
+      padding: 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 620px;
+    }
+    .badge-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--gold);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+    .left h1 {
+      margin: 24px 0 14px;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+    .left p {
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .mini-panel {
+      margin-top: 28px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .mini-panel strong { color: var(--gold); }
+    .right h2 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+    .subcopy {
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .notice {
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.28);
+      color: #fecaca;
+    }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      color: rgba(255,255,255,0.86);
+    }
+    .field input {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.36); }
+    .field input:focus {
+      outline: none;
+      border-color: rgba(246,195,68,0.7);
+      box-shadow: 0 0 0 4px rgba(246,195,68,0.12);
+    }
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #f8cf5a, #f59e0b);
+      color: var(--ink);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 800;
+    }
+    .return-link {
+      text-align: center;
+      margin-top: 18px;
+      color: rgba(255,255,255,0.7);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .return-link a { color: var(--gold); text-decoration: none; font-weight: 700; }
+    @media (max-width: 991px) {
+      .left { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.12); }
+      .right { min-height: auto; }
+    }

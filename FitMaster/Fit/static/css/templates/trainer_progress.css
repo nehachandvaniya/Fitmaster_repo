@@ -1,0 +1,6 @@
+﻿.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.5rem}
+  .summary-card,.panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:1.25rem}
+  .summary-card strong{display:block;font-size:1.6rem;color:#ffd966}
+  .table-lite{width:100%;min-width:860px;border-collapse:collapse}
+  .table-lite th,.table-lite td{padding:1rem .75rem;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+  .table-lite th{color:rgba(255,255,255,.58);text-transform:uppercase;font-size:.77rem}

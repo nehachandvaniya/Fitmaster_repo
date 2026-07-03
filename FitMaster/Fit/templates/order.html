@@ -1,0 +1,37 @@
+{% extends "adminnav.html" %}
+{% block title %}Orders{% endblock %}
+{% block navitems %}
+<div class="container" style="padding: 2rem;">
+    <h2 style="color: white; margin-bottom: 2rem;">Orders</h2>
+    
+    <div style="background: rgba(255,255,255,0.05); border-radius: 16px; padding: 1rem; overflow-x: auto;">
+        <table style="width: 100%; color: white; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="padding: 1rem; text-align: left;">ID</th>
+                    <th style="padding: 1rem; text-align: left;">Customer</th>
+                    <th style="padding: 1rem; text-align: left;">Date</th>
+                    <th style="padding: 1rem; text-align: left;">Total</th>
+                   
+                    <th style="padding: 1rem; text-align: left;">Product Quantity</th>
+                    <th style="padding: 1rem; text-align: left;">Payment Mode</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td style="padding: 1rem;">#{{ order.id }}</td>
+                    <td style="padding: 1rem;">{{ order.users.firstname }}{{order.users.lastname}}</td>
+                    <td style="padding: 1rem;">{{ order.datetime|date:"d M Y" }}</td>
+                    <td style="padding: 1rem;">Rs. {{ order.total_price }}</td>
+                    <td style="padding: 1rem;">{{ order.qty }}</td>
+                    <td style="padding: 1rem;">{{ order.payment_mode}}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

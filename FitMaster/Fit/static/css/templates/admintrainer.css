@@ -1,0 +1,63 @@
+.panel {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
+    color: white;
+}
+
+.trainer-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+}
+
+.trainer-table th,
+.trainer-table td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: left;
+}
+
+.trainer-table th {
+    color: #f3f4f6 !important;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+}
+
+.trainer-table td {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.metric {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    height: 100%;
+}
+
+.metric strong {
+    display: block;
+    font-size: 1.8rem;
+    color: #ffd966;
+}
+
+.badge-role {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255,215,0,0.14);
+    border: 1px solid rgba(255,215,0,0.3);
+    color: #ffd966;
+    font-weight: 600;
+    font-size: 0.8rem;
+}

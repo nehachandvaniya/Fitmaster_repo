@@ -1,0 +1,97 @@
+﻿{% extends "nav.html" %}
+{% load static %}
+{% block title %}My Orders{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/templates/user_orders.css' %}">
+{% endblock %}
+{% block content %}
+
+
+<div class="orders-wrap">
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="metric-card"><strong>{{ orders|length }}</strong>Total Orders</div></div>
+    <div class="col-md-4"><div class="metric-card"><strong>{{ total_items }}</strong>Total Items Purchased</div></div>
+    <div class="col-md-4"><div class="metric-card"><strong>Rs. {{ total_spent }}</strong>Total Spent</div></div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Recent Orders</div>
+        {% for order in recent_orders %}
+        <div class="order-card">
+          <div class="order-head">
+            <div>
+              <p class="order-title">{{ order.pro.name }}</p>
+              <div class="order-meta">Order #{{ order.id }} | {{ order.datetime|date:"d M Y, h:i A" }}</div>
+            </div>
+            <span class="status-pill">Placed</span>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item"><span>Quantity</span>{{ order.qty }}</div>
+            <div class="detail-item"><span>Total</span>Rs. {{ order.total_price }}</div>
+            <div class="detail-item"><span>Payment</span>{{ order.payment_mode }}</div>
+            <div class="detail-item"><span>Transaction</span>{{ order.transactionid|default:"Not available" }}</div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="empty-state">You have not placed any orders yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-panel h-100">
+        <div class="section-title">Older Orders</div>
+        {% for order in old_orders %}
+        <div class="order-card">
+          <div class="order-head">
+            <div>
+              <p class="order-title">{{ order.pro.name }}</p>
+              <div class="order-meta">Order #{{ order.id }} | {{ order.datetime|date:"d M Y, h:i A" }}</div>
+            </div>
+            <span class="status-pill">History</span>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item"><span>Quantity</span>{{ order.qty }}</div>
+            <div class="detail-item"><span>Total</span>Rs. {{ order.total_price }}</div>
+            <div class="detail-item"><span>Delivery City</span>{{ order.city }}</div>
+            <div class="detail-item"><span>Payment</span>{{ order.payment_mode }}</div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="empty-state">No older order history yet. Your next completed purchases will appear here.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if orders %}
+  <div class="glass-panel mt-4">
+    <div class="section-title">All Order Details</div>
+    {% for order in orders %}
+    <div class="order-card">
+      <div class="order-head">
+        <div>
+          <p class="order-title">{{ order.pro.name }}</p>
+          <div class="order-meta">Order #{{ order.id }} | {{ order.datetime|date:"d M Y, h:i A" }}</div>
+        </div>
+        <span class="status-pill">{{ order.payment_mode }}</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><span>First Name</span>{{ order.first_name }}</div>
+        <div class="detail-item"><span>Mobile</span>{{ order.mobile }}</div>
+        <div class="detail-item"><span>Address</span>{{ order.address }}</div>
+        <div class="detail-item"><span>City</span>{{ order.city }}</div>
+        <div class="detail-item"><span>State</span>{{ order.state }}</div>
+        <div class="detail-item"><span>Pincode</span>{{ order.pincode }}</div>
+        <div class="detail-item"><span>Quantity</span>{{ order.qty }}</div>
+        <div class="detail-item"><span>Total</span>Rs. {{ order.total_price }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
