@@ -13,20 +13,52 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
-from decouple import Csv, config
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+try:
+    from decouple import Csv, config
+except ImportError:
+    def _read_env_file(path):
+        values = {}
+        if not path.exists():
+            return values
+
+        for line in path.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            key, value = line.split('=', 1)
+            values[key.strip()] = value.strip().strip('"').strip("'")
+        return values
+
+    _ENV_FILE_VALUES = _read_env_file(BASE_DIR / '.env')
+
+    class Csv:
+        def __call__(self, value):
+            if isinstance(value, (list, tuple)):
+                return list(value)
+            return [item.strip() for item in str(value).split(',') if item.strip()]
+
+    def config(name, default=None, cast=None):
+        value = os.environ.get(name, _ENV_FILE_VALUES.get(name, default))
+        if value is None:
+            raise RuntimeError(f'Missing required setting: {name}')
+        if cast is bool:
+            return str(value).strip().lower() in ('1', 'true', 'yes', 'on')
+        if cast is not None:
+            return cast(value)
+        return value
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-fitmaster-local-development-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
