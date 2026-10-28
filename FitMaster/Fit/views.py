@@ -627,31 +627,46 @@ def admin_login(request):
     
 def login(request):
     if request.method == 'POST':
+        email = _normalize_email(request.POST.get('email'))
+        password = request.POST.get('password', '')
         try:
-            registered = User.objects.get(email__iexact=_normalize_email(request.POST.get('email')))
+            registered = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            return render(
+                request,
+                'login.html',
+                {'Not_registered': "No account with this email was found on this site. Check the email address or make sure you are using the same site where you registered."}
+            )
 
-            if registered.role == 'admin':
-                return render(request, 'login.html', {'Error': "Admin login is allowed only from the admin login page."})
+        if registered.role == 'admin':
+            return render(request, 'login.html', {'Error': "Admin login is allowed only from the admin login page."})
 
-            if registered.password == request.POST['password']:
-                request.session['user_id'] = registered.id
-                request.session['user_role'] = registered.role
-
-                if registered.role == 'trainer':
-                    trainer = Trainer.objects.get(users=registered)
-                    request.session['trainer_login'] = trainer.id
-                    request.session['trainer_email'] = registered.email
-                    return redirect('trainerdash')
-
-                request.session['login'] = registered.email
-                membership = _get_active_membership(registered)
-                if membership is None:
-                    messages.info(request, 'Please purchase a membership to start your fitness journey.')
-                    return redirect('usermember')
-                return redirect('index')
+        if registered.password != password:
             return render(request, 'login.html', {'Error': "Invalid email or password."})
-        except (User.DoesNotExist, Trainer.DoesNotExist):
-           return render(request,'login.html',{'Not_registered':"Register First "})
+
+        trainer = None
+        if registered.role == 'trainer':
+            trainer = Trainer.objects.filter(users=registered).first()
+            if trainer is None:
+                return render(
+                    request,
+                    'login.html',
+                    {'Error': "This account exists, but its trainer profile is missing. Please contact the site administrator."}
+                )
+
+        request.session['user_id'] = registered.id
+        request.session['user_role'] = registered.role
+        if trainer is not None:
+            request.session['trainer_login'] = trainer.id
+            request.session['trainer_email'] = registered.email
+            return redirect('trainerdash')
+
+        request.session['login'] = registered.email
+        membership = _get_active_membership(registered)
+        if membership is None:
+            messages.info(request, 'Please purchase a membership to start your fitness journey.')
+            return redirect('usermember')
+        return redirect('index')
     else:
        return render(request,'login.html')
 
