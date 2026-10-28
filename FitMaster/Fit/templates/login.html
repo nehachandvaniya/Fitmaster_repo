@@ -30,6 +30,10 @@
             <h2>Sign In</h2>
             <p class="subcopy">Customer and trainer users can continue from here.</p>
 
+            {% for message in messages %}
+              <div class="notice success"><i class="fas fa-circle-check me-2"></i>{{ message }}</div>
+            {% endfor %}
+
             {% if Not_registered %}
               <div class="notice error"><i class="fas fa-circle-exclamation me-2"></i>{{ Not_registered }}</div>
             {% endif %}

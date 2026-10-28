@@ -3,7 +3,7 @@ from decimal import Decimal
 from types import SimpleNamespace
 
 from django.shortcuts import render, redirect
-from django.db import models
+from django.db import models, transaction
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import *
@@ -348,6 +348,7 @@ def customer_required(view_func):
 def _get_logged_trainer(request):
     return Trainer.objects.select_related('users').get(id=request.session['trainer_login'])
 
+@transaction.atomic
 def register(request):
     if request.method == 'POST':
         email = _normalize_email(request.POST.get('email'))
@@ -374,7 +375,7 @@ def register(request):
             return render(
                 request,
                 'Userregister.html',
-                {'registered': "Email is already Registered ! Please try with another email."}
+                {'registered': "An account with this email already exists. Please sign in or reset your password."}
             )
 
         obj = User()
@@ -399,11 +400,13 @@ def register(request):
             trainer.qualification = request.POST['qualification']
             trainer.save()
 
-        return render(request, 'login.html', {'saved': "Registration Successful! Please login to continue."})
+        messages.success(request, "Registration successful! Please sign in to continue.")
+        return redirect('login')
     else:
         return render(request, 'Userregister.html')
 
 
+@transaction.atomic
 def trainer_register(request):
     if request.method == 'POST':
         email = _normalize_email(request.POST.get('email'))
@@ -418,7 +421,7 @@ def trainer_register(request):
             return render(
                 request,
                 'trainer_register.html',
-                {'registered': "Email is already registered. Please use another email."}
+                {'registered': "An account with this email already exists. Please sign in or reset your password."}
             )
 
         user = User()
@@ -442,11 +445,8 @@ def trainer_register(request):
         trainer.qualification = request.POST['qualification']
         trainer.save()
 
-        return render(
-            request,
-            'login.html',
-            {'saved': "Trainer registration successful. Please login to continue."}
-        )
+        messages.success(request, "Trainer registration successful! Please sign in to continue.")
+        return redirect('login')
     return render(request, 'trainer_register.html')
 
 
