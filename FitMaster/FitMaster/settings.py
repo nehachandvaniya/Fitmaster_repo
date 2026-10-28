@@ -140,6 +140,10 @@ if DATABASE_URL:
         conn_max_age=600,
         ssl_require=True,
     )
+elif RENDER_EXTERNAL_HOSTNAME:
+    raise RuntimeError(
+        'DATABASE_URL is required on Render. Configure the service to use its PostgreSQL database.'
+    )
 
 
 # Password validation
