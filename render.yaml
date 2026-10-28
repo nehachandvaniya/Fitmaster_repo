@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: fitmaster
+    runtime: python
+    plan: free
+    rootDir: FitMaster
+    buildCommand: ./build.sh
+    startCommand: gunicorn FitMaster.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fitmaster-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: localhost,127.0.0.1
+      - key: ADMIN_LOGIN_USERNAME
+        value: admin
+      - key: ADMIN_LOGIN_PASSWORD
+        sync: false
+
+databases:
+  - name: fitmaster-db
+    plan: free

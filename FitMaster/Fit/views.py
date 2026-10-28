@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta
 from .form import ProductSearchForm
 from django.conf import settings
 from django.contrib.auth import authenticate, login as django_login
+from django.utils.crypto import constant_time_compare
 
 from django.contrib import messages
 from django.utils import timezone
@@ -593,8 +594,21 @@ def forgot_trainer_password(request):
 @ensure_csrf_cookie
 def admin_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+
+        configured_username = settings.ADMIN_LOGIN_USERNAME
+        configured_password = settings.ADMIN_LOGIN_PASSWORD
+        if (
+            configured_password
+            and constant_time_compare(username, configured_username)
+            and constant_time_compare(password, configured_password)
+        ):
+            request.session.cycle_key()
+            request.session['admin_login'] = username
+            request.session['user_role'] = 'admin'
+            return redirect('dash')
+
         user = authenticate(request, username=username, password=password)
 
         if user is not None and (user.is_staff or user.is_superuser):
